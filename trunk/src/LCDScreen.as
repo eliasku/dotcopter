@@ -2,14 +2,11 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.BlendMode;
 	import flash.display.Graphics;
 	import flash.display.PixelSnapping;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.BlurFilter;
-	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
@@ -19,8 +16,8 @@ package
 	 */
 	public class LCDScreen extends Sprite
 	{
-		private static const COLS:int = 96;
-		private static const ROWS:int = 96;
+		private static const CELL_COLOR:uint = 0x000000;
+		private static const SPACE_COLOR:uint = 0x090909;
 		
 		private static const CELL_WIDTH:int = 3;
 		private static const CELL_HEIGHT:int = 3;
@@ -28,153 +25,154 @@ package
 		private static const SPACE_X:int = 1;
 		private static const SPACE_Y:int = 1;
 		
-		private var _backData:BitmapData;
-		private var _blurData:BitmapData;
-		private var _trails:Array = new Array();
+		private var _cols:int;
+		private var _rows:int;
 		
+		private var _buffer:BitmapData;
+		private var _screen:BitmapData;
+		private var _trails:Vector.<uint>;
 		private var _bitmap:Bitmap;
 		
-		public function LCDScreen()
-		{			
-			opaqueBackground = 0x222222;
-			scrollRect = new Rectangle(0, 0, COLS*(CELL_WIDTH+SPACE_X), ROWS*(CELL_HEIGHT+SPACE_Y));
+		private var _size:Rectangle;
+		
+		public function LCDScreen(columns:int = 96, rows:int = 96)
+		{
+			_cols = columns;
+			_rows = rows;
+			_size = new Rectangle(0, 0, _cols*(CELL_WIDTH+SPACE_X), _rows*(CELL_HEIGHT+SPACE_Y));
 			
-			_backData = new BitmapData(scrollRect.width, scrollRect.height, true, 0x00);
-			_blurData = new BitmapData(scrollRect.width, scrollRect.height, true, 0);
-			_bitmap = new Bitmap(_backData, PixelSnapping.NEVER, false);
+			opaqueBackground = CELL_COLOR;
+			//scrollRect = _size;
+			//cacheAsBitmap = true;
+			
+			_buffer = new BitmapData(_size.width, _size.height, true, 0);
+			_screen = new BitmapData(_size.width, _size.height, true, 0);
+			_bitmap = new Bitmap(_screen, PixelSnapping.NEVER, false);
 			
 			addChild(_bitmap);
 			
 			var i:int;
 			var offset:int;
 			var g:Graphics = graphics;
-			g.lineStyle(SPACE_Y, 0);
-			while (i < ROWS)
+			
+			g.lineStyle(SPACE_Y, SPACE_COLOR);
+			while (i < _rows)
 			{
 				offset = i*(CELL_HEIGHT+SPACE_X) - 1;
 				g.moveTo(0, offset);
-				g.lineTo(scrollRect.width, offset);
+				g.lineTo(_size.width, offset);
 				++i;
 			}
 			
-			g.lineStyle(SPACE_X, 0);
+			g.lineStyle(SPACE_X, SPACE_COLOR);
 			i = 0;
-			while(i < COLS)
+			while(i < _cols)
 			{
 				offset = i*(CELL_WIDTH+SPACE_Y) - 1;
 				g.moveTo(offset, 0);
-				g.lineTo(offset, scrollRect.height);
+				g.lineTo(offset, _size.height);
 				++i;
 			}
 			
+			//graphics.clear();
+		
+			_trails = new Vector.<uint>(_cols*_rows, true);
 			i = 0;
-			while(i < COLS*ROWS)
+			while(i < _cols*_rows)
 			{
-				_trails[i] = 0.0;
+				_trails[i] = 0x0;
 				++i;
 			}
 		}
 			
 		public function draw(source:BitmapData, sourceRect:Rectangle):void
 		{
-			var ba:ByteArray;
-			var color:uint;
-			var trail:uint;
-			var i:int;
-			var pixels:int;
-			var rc:Rectangle = new Rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT);
-			var p:Point = new Point();
-			var a:int, r:int, g:int, b:int;
-			
 			if(!sourceRect) sourceRect = source.rect;
-			if(sourceRect.width > COLS) sourceRect.width = COLS;
-			if(sourceRect.height > ROWS) sourceRect.height = ROWS;
+			if(sourceRect.width > _cols) sourceRect.width = _cols;
+			if(sourceRect.height > _rows) sourceRect.height = _rows;
 			
-			_backData.lock();
-			_blurData.lock();
+			_buffer.lock();
+			_screen.lock();
 			source.lock();
 			
-			_backData.fillRect(_backData.rect, 0x00000000);
-			_blurData.fillRect(_blurData.rect, 0x00000000);
+			_buffer.fillRect(_buffer.rect, 0x00000000);
 			
-			ba = source.getPixels(sourceRect);
-			ba.position = 0;
-			pixels = ba.length / 4;
+			var bytes:ByteArray = source.getPixels(sourceRect);
+			bytes.position = 0;
 			
-			while(i < pixels)
+			var i:int, j:int, k:int;
+			const rc:Rectangle = new Rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT);
+			
+			const spx:int = CELL_WIDTH + SPACE_X;
+			const spy:int = CELL_HEIGHT + SPACE_Y;
+			
+			const t:Number = 0.65;
+			
+			var trail:uint, ta:uint, tr:uint, tg:uint, tb:uint;
+			var color:uint, ca:uint, cr:uint, cg:uint, cb:uint;
+			
+			while(j < _rows)
 			{
-				//color = ba.readUnsignedInt();
-				_trails[i] = color = trailPixel(_trails[i], ba.readUnsignedInt());
-				
-				rc.x = int(i % COLS) * (CELL_WIDTH + SPACE_X);
-				rc.y = int(i / COLS) * (CELL_HEIGHT + SPACE_Y);
-				
-				if(((color >> 24) & 0xff) > 0)
+				rc.x = 0.0;
+				i = 0;
+				while(i < _cols)
 				{
-					_blurData.fillRect(rc, color);
+					trail = _trails[k];
+					color = bytes.readUnsignedInt();
+					
+					ta = t * ((trail >> 24) & 0xff);
+					tr = t * ((trail >> 16) & 0xff);
+					tg = t * ((trail >> 8) & 0xff);
+					tb = t * (trail & 0xff);
+					
+					ca = (color >> 24) & 0xff;
+					cr = (color >> 16) & 0xff;
+					cg = (color >> 8) & 0xff;
+					cb = (color & 0xff);
+					
+					if(ca > ta) ta = ca;
+					if(cr > tr) tr = cr;
+					if(cg > tg) tg = cg;
+					if(cb > tb) tb = cb;
+					
+					color = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+					
+					_trails[k] = color;
+					
+					if(ta > 0)
+						_buffer.fillRect(rc, color);
+					
+					rc.x += spx;
+					
+					++k;
+					++i;
 				}
 				
-				++i;
+				rc.y += spy;
+				
+				++j;
 			}
 			
-			//var shape:Shape = new Shape();
-			//shape.graphics.beginFill(0x000000, 1.0, );
-			//shape.graphics.drawRect(0, 0, _backData.rect.width, _backData.rect.height);
-			_backData.draw(_blurData);//, null, null, BlendMode.ADD);
-			_blurData.applyFilter(_blurData, _blurData.rect, p, new BlurFilter(4.0, 4.0, BitmapFilterQuality.LOW));
-			_backData.draw(_blurData, null, null, BlendMode.ADD);
-			_blurData.applyFilter(_backData, _blurData.rect, p, new BlurFilter(8.0, 8.0, BitmapFilterQuality.LOW));
-			_backData.draw(_blurData, null, new ColorTransform(1, 1, 1, 0.5), BlendMode.ADD);
+			
+			
+			var p:Point = new Point();
+			const blurSize:Number = 4.0;
+			_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.LOW));
+			_screen.copyPixels(_buffer, _buffer.rect, p, null, null, true);
 			
 			source.unlock();
-			_blurData.unlock();
-			_backData.unlock();
+			_screen.unlock();
+			_buffer.unlock();
 		}
 		
-		private function trailPixel(trail:uint, color:uint):uint
+		public function get screenWidth():int
 		{
-			var ta:int = (trail >> 24) & 0xff;
-			var tr:int = (trail >> 16) & 0xff;
-			var tg:int = (trail >> 8) & 0xff;
-			var tb:int = (trail) & 0xff;
-			var ca:int = (color >> 24) & 0xff;
-			var cr:int = (color >> 16) & 0xff;
-			var cg:int = (color >> 8) & 0xff;
-			var cb:int = (color) & 0xff;
-			var t:Number = 0.6;
-			var inv:Number = 0.0;
-			
-			//ta = (ta >> 1) | ca;
-			//tr = (tr >> 1) | cr;
-			//tg = (tg >> 1) | cg;
-			//tb = (tb >> 1) | cb;
-			
-			/*if(ca < ta) ta = int(ta * n);
-			else ta = ca;
-			
-			if(cr < tr) tr = int(tr * n);
-			else tr = cr;
-			
-			if(cg < tg) tg = int(tg * n);
-			else tg = cg;
-			
-			if(cb < tb) tb = int(tb * n);
-			else tb = cb;*/
-			
-			//n = ca / 255.0;
-			
-			ta = Math.max(int(ta*t+ca*inv), ca);
-			tr = Math.max(int(tr*t+cr*inv), cr);
-			tg = Math.max(int(tg*t+cg*inv), cg);
-			tb = Math.max(int(tb*t+cb*inv), cb);
-			//tr = Math.max(int(cr*n)+int(tr), cr);
-			//tg = Math.max(int(cg*n)+int(tg), cg);
-			//tb = Math.max(int(cb*n)+int(tb), cb);
-			//tr = Math.max(int(cr*n)+int(tr*b), cr);
-			//tg = Math.max(int(cg*n)+int(tg*b), cg);
-			//tb = Math.max(int(cb*n)+int(tb*b), cb);
-			
-			return ((ta & 0xff) << 24) | ((tr & 0xff) << 16) | ((tg & 0xff) << 8)| ((tb & 0xff));
+			return _size.width;
+		}
+		
+		public function get screenHeight():int
+		{
+			return _size.height;
 		}
 	}
 }
