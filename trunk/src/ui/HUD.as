@@ -113,7 +113,7 @@ package ui
 					break;
 				}
 				
-				heart.x = GameSize.X1 - 10 - 9 * i;
+				heart.x = FP.width - 10 - 9 * i;
 				heart.y = 2;
 				
 				_display.add(heart);

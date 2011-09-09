@@ -1,5 +1,6 @@
 package  
 {
+	import land.Landscape;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.World;
@@ -19,7 +20,7 @@ package
 		private static var _instance:CoptGame;
 		
 		public var copter:Copter;
-		public var rocks:Rocks;
+		public var scenery:Landscape;
 		public var shaker:Shaker;
 		public var explode:Explode;
 		public var hud:HUD;
@@ -42,7 +43,9 @@ package
 			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2);
 			shaker = new Shaker();
 			
-			rocks = new Rocks(); add(rocks);
+			scenery = new Landscape();
+			add(scenery);
+			
 			copter = new Copter(); add(copter);
 			//_turret = new Turret(copter); add(_turret);
 			explode = new Explode(); addGraphic(explode);
@@ -64,7 +67,7 @@ package
 				}
 				return;
 			} else {
-				FP.camera.y = FP.clamp(copter.y - GameSize.X1_2, 0, GameSize.X1);
+				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
 				if (started)
 				{
 					_t++;
@@ -95,13 +98,14 @@ package
 			_pause.visible = true;
 			CoptGame.pauseMode = true;
 		}
-
+		
 		public function reset():void
 		{
 			CoptGame.clickable = true;
 			_start.visible = true;
 			copter.reset();
-			rocks.reset();
+			
+			scenery.reset();
 			
 			if (_turret) _turret.reset();
 			
