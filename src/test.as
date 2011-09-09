@@ -13,11 +13,11 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	[SWF(backgroundColor="#000000", width="800", height="600", frameRate="30")]
+	[SWF(backgroundColor="#000000", width="480", height="360", frameRate="30")]
 	public class test extends Sprite 
 	{
-		public static const COLS:int = 200;
-		public static const ROWS:int = 150;
+		public static const COLS:int = 120;
+		public static const ROWS:int = 90;
 		
 		public static var canClick:Boolean = true;
 		
