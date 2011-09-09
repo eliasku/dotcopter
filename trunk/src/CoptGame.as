@@ -29,7 +29,6 @@ package
 		private var _starLayer1:Starfield;
 		private var _starLayer2:Starfield;
 		private var _pause:Pause;
-		private var _start:Start;
 		private var _turret:Turret;
 		
 		private var _t:int = 0;
@@ -50,7 +49,6 @@ package
 			//_turret = new Turret(copter); add(_turret);
 			explode = new Explode(); addGraphic(explode);
 			
-			_start = new Start(); add(_start);
 			_pause = new Pause(); add(_pause); 
 			curtains = new Curtains(); add(curtains);
 			hud = new HUD(); add(hud);
@@ -84,7 +82,6 @@ package
 				} 
 				else if (Input.mousePressed && test.canClick && CoptGame.clickable)
 				{
-					_start.visible = false;
 					started = true;
 				}
 				
@@ -102,7 +99,6 @@ package
 		public function reset():void
 		{
 			CoptGame.clickable = true;
-			_start.visible = true;
 			copter.reset();
 			
 			scenery.reset();

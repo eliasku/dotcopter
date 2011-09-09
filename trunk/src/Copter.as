@@ -56,7 +56,7 @@ package
 		{
 			_game = CoptGame.instance;
 			
-			x = FP.width * 0.25;
+			x = FP.width * 0.3;
 			y = FP.height;
 			
 			copt = new Image(HELI);

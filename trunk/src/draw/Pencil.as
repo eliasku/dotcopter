@@ -1,6 +1,7 @@
 package draw
 {
 	import flash.display.BitmapData;
+	import flash.display.Shape;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import land.ITerrain;
@@ -25,6 +26,16 @@ package draw
 		private var _source:ITerrain;
 		private var _points:Vector.<Point>;
 		
+		[Embed(source = '../../assets/mountain.png')] private const TILE:Class;
+		private var _pattern:BitmapData;
+		private var _ground:Shape;
+		
+		public function Pencil()
+		{
+			_ground = new Shape();
+			_pattern = new TILE().bitmapData;
+		}
+		
 		public function setDrawingSource(source:Class):void
 		{
 			_source = new source as ITerrain;
@@ -48,27 +59,38 @@ package draw
 		{
 			var sy:int = (dir > 0) ? _target.rect.top : _target.rect.bottom;
 			
-			for (var i:int = 1; i < _points.length; i++)
-			{
-				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, WHITE);
-				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i-1].x, sy, WHITE);
-			}
-			
 			var sp:Point = _points[0];
 			var ep:Point = _points[_points.length - 1];
 			
-			//Draw.line(sp.x, sy, ep.x, sy, WHITE);
-			Draw.line(ep.x, sy + dir*_source.maxSize - ep.y, ep.x, sy, WHITE);
+			_ground.graphics.clear();
+			_ground.graphics.beginBitmapFill(_pattern);
+			_ground.graphics.moveTo(sp.x, sy);
+			_ground.graphics.lineTo(sp.x, sp.y);
 			
-			var line:int = sy + dir;
+			for (var i:int = 0; i < _points.length; i++)
+			{
+/*				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, WHITE);
+				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i-1].x, sy, WHITE);*/
+				_ground.graphics.lineTo(_points[i].x, sy + dir*_source.maxSize - _points[i].y);
+			}
+			
+			_ground.graphics.lineTo(ep.x, sy);
+			_ground.graphics.lineTo(sp.x, sy);
+			_ground.graphics.endFill();
+			
+			//Draw.line(sp.x, sy, ep.x, sy, WHITE);
+			//Draw.line(ep.x, sy + dir*_source.maxSize - ep.y, ep.x, sy, WHITE);
+			
+/*			var line:int = sy + dir;
 			for (i = 1; i < _points.length; i++)
 			{
-				// лишний второй чек
 				if (_target.getPixel32(_points[i].x, line) == WHITE && _target.getPixel32(_points[i - 1].x, line) == WHITE)
 				{
 					_target.floodFill(_points[i].x - 1, line, WHITE);
 				}
-			}
+			}*/
+			
+			_target.draw(_ground);
 		}
 		
 		public function set drawingMode(mode:String):void 
