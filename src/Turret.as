@@ -80,7 +80,7 @@ package
 				var loopCounter:int = 0;
 				while (loopCounter++ != 20) 
 				{
-					if (collide("rock", x, y))
+					if (collide("land", x, y))
 						y -= 1*_dir;
 					else 
 						break;

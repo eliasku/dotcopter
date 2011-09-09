@@ -21,8 +21,8 @@ package
 		private var _modes:Array = [MODE_HORIZONTAL, MODE_VERTICAL, MODE_SQARE];
 		private var _curMode:String;
 		
-		private const BACK_W:int = 96;
-		private const BACK_H:int = 86;
+		private const BACK_W:int = FP.width;
+		private const BACK_H:int = FP.height - 10;
 		
 		private var _delay:int = 30;
 		private var _dir:int = 1;
@@ -54,7 +54,7 @@ package
 		
 		public function updateBlind(percent:Number):void
 		{
-			var holeSize:Number = GameSize.X1 * ((percent < 0) ? -percent : percent); //Math.abs(percent);
+			var holeSize:Number = FP.width * ((percent < 0) ? -percent : percent); //Math.abs(percent);
 		
 			_hole.graphics.clear();
 			_hole.graphics.beginFill(0);
@@ -62,7 +62,7 @@ package
 			_hole.graphics.endFill();
 			
 			_holeMatrix = new Matrix();
-			_holeMatrix.translate((GameSize.X1 - holeSize) * 0.5, (GameSize.X1- holeSize) * 0.5);
+			_holeMatrix.translate((FP.width - holeSize) * 0.5, (FP.height- holeSize) * 0.5);
 			
 			_back.fillRect(_back.rect, 0xFFFFFFFF);
 			_back.draw(_hole, _holeMatrix, null, BlendMode.ERASE);

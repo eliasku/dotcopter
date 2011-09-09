@@ -34,8 +34,8 @@ package
 					shake(-1);
 				else
 				{
-					updateShake(int(_intensity * (FP.random * GameSize.X2 - GameSize.X1)),
-								int(_intensity * (FP.random * GameSize.X2 - GameSize.X1)));
+					updateShake(int(_intensity * (FP.random * FP.width * 2 - FP.width)),
+								int(_intensity * (FP.random * FP.height * 2 - FP.height)));
 				}
 			}
 		}

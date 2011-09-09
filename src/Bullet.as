@@ -12,7 +12,6 @@ package
 	public class Bullet extends Entity 
 	{
 		private var _turret:Turret;
-		private var _rocks:Rocks;
 		private var _explode:Explode;
 		
 		private var _power:Number = 4;
@@ -31,7 +30,7 @@ package
 			_turret = turret;
 			_startPos = startPos;
 			
-			_rocks = CoptGame(FP.world).rocks;
+			//_rocks = CoptGame(FP.world).land;
 			_explode = CoptGame(FP.world).explode;
 			
 			var image:Image = Image.createRect(2, 2); 
@@ -67,9 +66,9 @@ package
 			if (_turret.x > _targetOriginX || x < 0)
 				FP.world.remove(this);
 				
-			if (collide("rock", x, y))
+			if (collide("land", x, y))
 			{
-				_rocks.makeHole(getCentre(), 5);
+				//_rocks.makeHole(getCentre(), 5);
 				_explode.burst(getCentre());
 				FP.world.remove(this);
 			}

@@ -56,8 +56,8 @@ package
 		{
 			_game = CoptGame.instance;
 			
-			x = GameSize.X1_4;
-			y = GameSize.X3_4;
+			x = FP.width * 0.25;
+			y = FP.height;
 			
 			copt = new Image(HELI);
 			_rotor = Image.createRect(9, 1); _rotor.x = 1;
@@ -115,10 +115,10 @@ package
 				if (!isGod())
 				{
 					_rotor.visible = (_t % 2 == 0) ? true : false;
-					if (collide("rock", x, y))
+					if (collide("land", x, y))
 					{
-						damage();
-						vy *= -1;
+/*						damage();
+						vy *= -1;*/
 					}
 					if (collide("bullet", x, y))
 						damage();
@@ -160,7 +160,7 @@ package
 			_rotor.visible = true;
 			_t = 0;
 			
-			y = GameSize.X3_4;
+			y = FP.height;
 			vy = 0;
 			
 			godMode(-1);
@@ -180,7 +180,7 @@ package
 			}
 			else
 			{
-				_game.rocks.makeHole(centre);
+				_game.scenery.makeHole(centre);
 				// немножко частиц
 				godMode();
 			}
@@ -188,7 +188,7 @@ package
 		
 		private function fatality():void
 		{
-			_game.rocks.makeHole(centre);
+			_game.scenery.makeHole(centre);
 			_game.explode.blast(centre);
 			_game.curtains.close();
 		}

@@ -5,11 +5,9 @@
 
 	public class Main extends Engine
 	{
-		public function Main(size:int = 96):void 
+		public function Main():void 
 		{
-			GameSize.init(size);
-			
-			super(GameSize.X1, GameSize.X1, 30, true);
+			super(test.COLS, test.ROWS, 30, true);
 			FP.screen.color = 0;
 			
 			FP.world = new CoptGame();

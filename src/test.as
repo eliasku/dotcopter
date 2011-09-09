@@ -13,11 +13,11 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	[SWF(backgroundColor="#000000", width="784", height="784", frameRate="60")]
+	[SWF(backgroundColor="#000000", width="800", height="600", frameRate="30")]
 	public class test extends Sprite 
 	{
-		private static const COLS:int = 96*2;
-		private static const ROWS:int = 96*2;
+		public static const COLS:int = 200;
+		public static const ROWS:int = 150;
 		
 		public static var canClick:Boolean = true;
 		
@@ -29,23 +29,16 @@ package
 		public function test() 
 		{
 			_screen = new LCDScreen(COLS, ROWS);
-			_screen.x = _screen.y = 8;
+			_screen.x = _screen.y;
 			stage.addChild(_screen);
 			
-			_main = new Main(COLS);
+			_main = new Main();
 			_main.visible = false;
 			addChild(_main);
 			
 			SWFProfiler.init(stage, this);
 			
-			/*_debug = new BitmapData(400, 400, true, 0x00000000);
-			var output:Bitmap = new Bitmap(_debug);
-			addChild(output);*/
-			
-			trace(_screen.screenWidth + 16);
-			trace(_screen.screenHeight + 16);
-		
-			stage.fullScreenSourceRect = new Rectangle(0, 0, _screen.screenWidth + 16, _screen.screenHeight + 16);
+			stage.fullScreenSourceRect = new Rectangle(0, 0, _screen.screenWidth, _screen.screenHeight);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
@@ -53,14 +46,6 @@ package
 		private function onEnterFrame(e:Event):void 
 		{
 			_screen.draw(FP.buffer, _sceenRect);
-			//log("fps", SWFProfiler.currentFps.toFixed(2));
-		}
-		
-		public function log(...msg):void
-		{
-			//_debug.fillRect(_debug.rect, 0x00000000);
-			//var str:String = (msg.length > 0) ? msg.join(" ") : msg.toString();
-			//DText.draw(_debug, str, 9, 8);
 		}
 	}
 }
