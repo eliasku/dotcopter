@@ -72,6 +72,19 @@
 		}
 		
 		/**
+		* Sets the gravity range of this particle type.
+		* @param  gravity      Gravity amount to affect to the particle y velocity.
+		* @param  gravityRange  Random amount to add to the particle's gravity.
+		* @return  This ParticleType object.
+		*/
+		public function setGravity(gravity:Number = 0, gravityRange:Number = 0):ParticleType
+		{
+			_gravity = gravity;
+			_gravityRange = gravityRange;
+			return this;
+		}
+		
+		/**
 		 * Sets the alpha range of this particle type.
 		 * @param	start		The starting alpha.
 		 * @param	finish		The finish alpha.
@@ -140,6 +153,10 @@
 		/** @private */ internal var _alpha:Number = 1;
 		/** @private */ internal var _alphaRange:Number = 0;
 		/** @private */ internal var _alphaEase:Function;
+		
+		// Gravity information.
+		/** @private */ internal var _gravity:Number = 0;
+		/** @private */ internal var _gravityRange:Number = 0;
 		
 		// Color information.
 		/** @private */ internal var _red:Number = 1;

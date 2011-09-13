@@ -22,7 +22,7 @@ package land
 			_maxHeight = FP.halfHeight * 0.5;
 			_segments = 4;
 			_roughness = 10;
-			_screenOffset = FP.halfHeight * 1.25;
+			_screenOffset = FP.halfHeight * 1;
 		}
 		
 		/* INTERFACE land.ITerrain */

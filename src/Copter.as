@@ -4,6 +4,7 @@ package
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.net.URLRequest;
+	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Graphiclist;
@@ -52,12 +53,16 @@ package
 		private var _game:CoptGame;
 		private var _centre:Point = new Point();
 		
+		private var _upLim:int = 0;
+		private var _downLim:int = Landscape.PIECE_HEIGHT;
+		
 		public function Copter() 
 		{
 			_game = CoptGame.instance;
 			
 			x = FP.width * 0.3;
-			y = FP.height;
+			var down:int = _game.terrain.getPlaceOffset(x + 5);
+			y = down - _game.terrain.spaceGap * 0.5;
 			
 			copt = new Image(HELI);
 			_rotor = Image.createRect(9, 1); _rotor.x = 1;
@@ -117,14 +122,29 @@ package
 					_rotor.visible = (_t % 2 == 0) ? true : false;
 					if (collide("land", x, y))
 					{
-/*						damage();
-						vy *= -1;*/
+						dodge();
 					}
 					if (collide("bullet", x, y))
 						damage();
 				}
 				
 				y += vy;
+				
+				if (isGod())
+				{
+					var down:int = _game.terrain.getPlaceOffset(x + 5);
+					var up:int = down - _game.terrain.spaceGap;
+					
+					if (y + 8 > down)
+						y = down - 8;
+					if (y - 8 < up)
+						y = up + 8;
+				}
+				
+				if (y - 2 < _upLim)
+					y = _upLim + 2;
+				if (y + 10 > _downLim)
+					y = _downLim - 10;
 			}
 			
 			if (fraged) {
@@ -138,6 +158,26 @@ package
 			}
 			
 			super.update();
+		}
+		
+		private function dodge():void 
+		{
+			var down:int = _game.terrain.getPlaceOffset(x + 5);
+			var up:int = down - _game.terrain.spaceGap;
+			
+			var middle:int = (up + down) * 0.5;
+			if (y + 5 > middle)
+			{
+				// вниз
+				if (vy > 0) vy *= -1;
+			}
+			else
+			{
+				// вверх
+				if (vy < 0) vy *= -1;
+			}
+			
+			damage();
 		}
 		
 		public function destroy():void
@@ -160,7 +200,8 @@ package
 			_rotor.visible = true;
 			_t = 0;
 			
-			y = FP.height;
+			var down:int = _game.terrain.getPlaceOffset(x + 5);
+			y = down - _game.terrain.spaceGap * 0.5;
 			vy = 0;
 			
 			godMode(-1);
@@ -180,15 +221,19 @@ package
 			}
 			else
 			{
-				_game.scenery.makeHole(centre);
-				// немножко частиц
+				SoundManager.play("kick");
+				
+				_game.explode.detonate("small", centre, 25);
+				_game.terrain.makeHole(centre);
+				_game.shaker.perform(0.02, 6);
+				
 				godMode();
 			}
 		}
 		
 		private function fatality():void
 		{
-			_game.scenery.makeHole(centre);
+			_game.terrain.makeHole(centre);
 			_game.explode.blast(centre);
 			_game.curtains.close();
 		}
@@ -214,7 +259,7 @@ package
 			}
 		}
 		
-		private function godMode(duration:int = 45):void
+		private function godMode(duration:int = 60):void
 		{
 			_godTime = duration;
 			if (_godTime < 0)

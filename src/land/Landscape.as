@@ -35,12 +35,13 @@ package land
 		private var _shiftRect:Rectangle;
 		private var _threshold:int;
 		private var _mergeMatrix:Matrix;
-		
-		private var _dx:Number = 3;
-		
+
 		private var _pencil:Pencil;
 		private var _hole:Shape = new Shape();
 		
+		public var vx:Number = 3;
+		public var spaceGap:int;
+				
 		public function Landscape()
 		{
 			_frame = new BitmapData(FP.width, PIECE_HEIGHT, true, Pencil.BLACK);
@@ -58,8 +59,10 @@ package land
 			_mergeMatrix = new Matrix(1, 0, 0, 1, PIECE_WIDTH, 0);
 			
 			_pencil = new Pencil();
-			_pencil.drawingMode = DrawingMode.SINGLE;
-			_pencil.setDrawingSource(Rock);
+			_pencil.drawingMode = DrawingMode.DOUBLE;
+			_pencil.setDrawingSource(Plain);
+			
+			spaceGap = _pencil.drawingMargin;
 			
 			reset();
 			
@@ -80,7 +83,7 @@ package land
 			if (CoptGame.pauseMode) return;
 			if (CoptGame.started)
 			{
-				_shiftRect.x += _dx;
+				_shiftRect.x += vx;
 				if (_shiftRect.right > _threshold)
 				{
 					_shiftRect.x -= PIECE_WIDTH;
@@ -133,6 +136,23 @@ package land
 				_pieces[step(_cur, 1)].draw(_hole, holeMatrix, null, BlendMode.ERASE);
 			}
 			updatePiece();
+		}
+		
+		public function getPlaceOffset(px:int):int
+		{
+			var curPiece:BitmapData = _pieces[_cur];
+			
+			px += _shiftRect.x;
+			var sy:int = _pieceRect.bottom - 1;
+			
+			while (curPiece.getPixel32(px, sy) != Pencil.BLACK && sy > 0)
+			{
+				sy--;
+			}
+			
+			// -1 to mark for delete
+			
+			return sy;
 		}
 		
 	}

@@ -20,7 +20,7 @@ package
 		private static var _instance:CoptGame;
 		
 		public var copter:Copter;
-		public var scenery:Landscape;
+		public var terrain:Landscape;
 		public var shaker:Shaker;
 		public var explode:Explode;
 		public var hud:HUD;
@@ -42,8 +42,8 @@ package
 			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2);
 			shaker = new Shaker();
 			
-			scenery = new Landscape();
-			add(scenery);
+			terrain = new Landscape();
+			add(terrain);
 			
 			copter = new Copter(); add(copter);
 			//_turret = new Turret(copter); add(_turret);
@@ -51,6 +51,7 @@ package
 			
 			_pause = new Pause(); add(_pause); 
 			curtains = new Curtains(); add(curtains);
+
 			hud = new HUD(); add(hud);
 		}
 		
@@ -70,6 +71,8 @@ package
 				{
 					_t++;
 					if (_t % 2 == 0) HUD.score++;
+					
+					//if (_t % 15 == 0) create(Block);
 					
 					if (_turret)
 					{
@@ -99,9 +102,9 @@ package
 		public function reset():void
 		{
 			CoptGame.clickable = true;
-			copter.reset();
 			
-			scenery.reset();
+			terrain.reset();
+			copter.reset();
 			
 			if (_turret) _turret.reset();
 			
