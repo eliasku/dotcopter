@@ -2,13 +2,10 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.BlendMode;
 	import flash.display.Graphics;
 	import flash.display.PixelSnapping;
 	import flash.display.Shape;
 	import flash.display.Sprite;
-	import flash.filters.BitmapFilterQuality;
-	import flash.filters.BlurFilter;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
@@ -18,7 +15,7 @@ package
 	 */
 	public class LCDScreen extends Sprite
 	{
-		private static const CELL_COLOR:uint = 0x000000;//0x333366;
+		//private static const CELL_COLOR:uint = 0x000000;//0x333366;
 		private static const SPACE_COLOR:uint = 0x000000;//0x090909;
 		
 		private static const CELL_WIDTH:int = 2;
@@ -32,7 +29,7 @@ package
 		
 		private var _shape:Shape = new Shape();
 		private var _buffer:BitmapData;
-		private var _screen:BitmapData;
+		//private var _screen:BitmapData;
 		private var _trails:Vector.<uint>;
 		private var _bitmap:Bitmap;
 		
@@ -44,17 +41,17 @@ package
 			_rows = rows;
 			_size = new Rectangle(0, 0, _cols*(CELL_WIDTH+SPACE_X), _rows*(CELL_HEIGHT+SPACE_Y));
 			
-			opaqueBackground = CELL_COLOR;
+			opaqueBackground = 0x000000;
 			//scrollRect = _size;
 			//cacheAsBitmap = true;
 			
-			_buffer = new BitmapData(_size.width, _size.height, true, 0);
-			_screen = new BitmapData(_size.width, _size.height, false, 0);
-			_bitmap = new Bitmap(_screen, PixelSnapping.NEVER, false);
+			_buffer = new BitmapData(_size.width, _size.height, false, 0);
+			//_screen = new BitmapData(_size.width, _size.height, false, 0);
+			_bitmap = new Bitmap(_buffer, PixelSnapping.NEVER, false);
 			
 			addChild(_bitmap);
 			addChild(_shape);
-			_shape.alpha = 0.8;
+			_shape.alpha = 0.5;
 			
 			var i:int;
 			var offset:int;
@@ -97,23 +94,23 @@ package
 			if(sourceRect.height > _rows) sourceRect.height = _rows;
 			
 			_buffer.lock();
-			_screen.lock();
+			//_screen.lock();
 			source.lock();
 			
-			_buffer.fillRect(_buffer.rect, 0x00000000);
+			//_buffer.fillRect(_buffer.rect, 0x00000000);
 			
 			var bytes:ByteArray = source.getPixels(sourceRect);
 			bytes.position = 0;
 			
 			var i:int, j:int, k:int;
-			const rc:Rectangle = new Rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT);
+			const rc:Rectangle = new Rectangle(0, 0, CELL_WIDTH+ SPACE_X, CELL_HEIGHT+ SPACE_Y);
 			//const rc2:Rectangle = new Rectangle(0, 0, CELL_WIDTH + SPACE_X, CELL_HEIGHT + SPACE_Y);
 			
 			const spx:int = CELL_WIDTH + SPACE_X;
 			const spy:int = CELL_HEIGHT + SPACE_Y;
 			
 			//const t:Number = 0.65;
-			//var des:Number = 0.0;
+			var des:Number = 0.0;
 			
 			var trail:uint, ta:uint, tr:uint, tg:uint, tb:uint;
 			var color:uint, ca:uint, cr:uint, cg:uint, cb:uint;
@@ -133,11 +130,12 @@ package
 					tr = ((trail >> 16) & 0xff) >> 1;
 					tg = ((trail >> 8) & 0xff) >> 1;
 					tb = (trail & 0xff) >> 1;
-				
+					
 					ca = color >> 24 & 0xff;
 					cr = color >> 16 & 0xff;
 					cg = color >> 8 & 0xff;
 					cb = color & 0xff;
+					//ca*=des;cr*=des;cg*=des;cb*=des;
 					
 					if(ca > ta) ta = ca;
 					if(cr > tr) tr = cr;
@@ -164,6 +162,18 @@ package
 						if(tb > cb) tb = cb;
 					}*/
 					
+					des = 1.0+0.1*Math.random();
+					ta = (ta*des);
+					if(ta > 255) ta = 255;
+					//des = 0.1+0.1*Math.random();
+					tr = (tr*des);
+					if(tr > 255) tr = 255;
+					//des = 0.1+0.1*Math.random();
+					tg = (tg*des);
+					if(tg > 255) tg = 255;
+					//des = 0.15+0.5*Math.random();
+					tb = (tb*des);
+					if(tb > 255) tb = 255;
 					
 					color = (ta << 24) | (tr << 16) | (tg << 8) | tb;
 					
@@ -192,12 +202,13 @@ package
 			const blurSize:Number = 6.0;
 			//_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.HIGH));
 			//_screen.copyPixels(_buffer, _buffer.rect, p, null, null, true);
-			_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.LOW));
-			_screen.draw(_buffer, null, null, BlendMode.OVERLAY);
+			//_screen.draw(_buffer, null, null, BlendMode.NORMAL);
+			//_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.LOW));
+			//_screen.draw(_buffer, null, null, BlendMode.OVERLAY);
 			//_screen.copyPixels(_buffer, _buffer.rect, p, null, null, true);
 			
 			source.unlock();
-			_screen.unlock();
+			//_screen.unlock();
 			_buffer.unlock();
 		}
 		
