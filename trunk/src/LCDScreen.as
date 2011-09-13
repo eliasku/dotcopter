@@ -80,8 +80,6 @@ package
 			}
 			
 			//_shape.graphics.clear();
-		
-			var i:int;
 			
 			_trails = new Vector.<uint>(_cols*_rows, true);
 			i = 0;

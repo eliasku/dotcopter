@@ -2,6 +2,7 @@ package draw
 {
 	import flash.display.BitmapData;
 	import flash.display.Shape;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import land.ITerrain;
@@ -17,6 +18,7 @@ package draw
 	{
 		public static const BLACK:uint = 0x00000000;
 		public static const WHITE:uint = 0xFFFFFFFF;
+		public static const RED:uint = 0xFFFF0000;
 		
 		private static const TOP:int = 1;
 		private static const BOTTOM:int = -1;
@@ -28,12 +30,16 @@ package draw
 		
 		[Embed(source = '../../assets/mountain.png')] private const TILE:Class;
 		private var _pattern:BitmapData;
+		[Embed(source='../../assets/grass.png')] private const STROKE:Class;
+		private var _contour:BitmapData;
+		
 		private var _ground:Shape;
 		
 		public function Pencil()
 		{
 			_ground = new Shape();
-			_pattern = new TILE().bitmapData;
+			_pattern = FP.getBitmap(TILE);
+			_contour = FP.getBitmap(STROKE);
 		}
 		
 		public function setDrawingSource(source:Class):void
@@ -65,18 +71,29 @@ package draw
 			_ground.graphics.clear();
 			_ground.graphics.beginBitmapFill(_pattern);
 			_ground.graphics.moveTo(sp.x, sy);
-			_ground.graphics.lineTo(sp.x, sp.y);
 			
 			for (var i:int = 0; i < _points.length; i++)
 			{
 /*				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, WHITE);
 				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i-1].x, sy, WHITE);*/
-				_ground.graphics.lineTo(_points[i].x, sy + dir*_source.maxSize - _points[i].y);
+				_ground.graphics.lineTo(_points[i].x, sy + dir * _source.maxSize - _points[i].y);
 			}
-			
 			_ground.graphics.lineTo(ep.x, sy);
 			_ground.graphics.lineTo(sp.x, sy);
 			_ground.graphics.endFill();
+			
+			
+			_ground.graphics.lineStyle(_contour.height);
+			
+			var matrix:Matrix = new Matrix();
+			if (dir > 0) matrix.rotate(Math.PI);
+			
+			_ground.graphics.lineBitmapStyle(_contour, matrix);
+			_ground.graphics.moveTo(sp.x, sy + dir * _source.maxSize - sp.y);
+			for (i = 1; i < _points.length; i++)
+			{
+				_ground.graphics.lineTo(_points[i].x, sy + dir * _source.maxSize - _points[i].y);
+			}
 			
 			//Draw.line(sp.x, sy, ep.x, sy, WHITE);
 			//Draw.line(ep.x, sy + dir*_source.maxSize - ep.y, ep.x, sy, WHITE);
@@ -91,23 +108,21 @@ package draw
 			}*/
 			
 			_target.draw(_ground);
+			
+/*			for (i = 1; i < _points.length; i++)
+			{
+				Draw.linePlus(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, 0xFF00FF00, 1, 2);
+			}*/
+		}
+		
+		public function get drawingMargin():int
+		{
+			return _source.maxSize * 2;
 		}
 		
 		public function set drawingMode(mode:String):void 
 		{
 			_mode = mode;
 		}
-		
-/*		private function getDrawMargin(px:int, dir:int):int
-		{
-			var sy:int = (dir > 0) ? 0 : _targetRect.bottom;
-			while (_target.getPixel32(px, sy) != WHITE)
-			{
-				sy += dir;
-			}
-			if (_target.getPixel32(px, sy + dir) == WHITE)
-				sy += dir;
-			return sy;
-		}*/
 	}
 }

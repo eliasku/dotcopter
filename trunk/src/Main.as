@@ -8,7 +8,10 @@
 		public function Main():void 
 		{
 			super(test.COLS, test.ROWS, 30, true);
-			FP.screen.color = 0;
+			FP.screen.color = 0xff333355;
+			FP.screen.scale = 4;
+			
+			SoundManager.initialize();
 			
 			FP.world = new CoptGame();
 		}

@@ -63,7 +63,7 @@ package land
 		
 		public function get maxSize():int 
 		{
-			return _maxHeight;
+			return FP.height * 0.5;
 		}
 		
 	}

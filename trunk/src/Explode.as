@@ -29,8 +29,9 @@ package
 			
 			newType("small", [0]);
 			// fixed time stamp 9, 6 = 0.3, 0.2
-			setMotion("small", 0, 4, 9, 360, 12, 6, Ease.sineOut);
-			setAlpha("small", 1.0, 0.5); 
+			setMotion("small", 0, 15, 12, 360, 5, 3, Ease.quadOut);
+			setAlpha("small", 1.0, 0.4); 
+			setGravity("small", 3, 0);
 		}
 		
 		public function blast(p:Point):void
@@ -50,6 +51,20 @@ package
 			}
 		}
 		
+		public function detonate(type:String, pos:Point, num:int):void
+		{
+			resetColor(type);
+			for (var i:int = 0; i < num; i++)
+			{
+				emit(type, pos.x, pos.y);
+			}
+		}
+		
+		private function resetColor(type:String):void 
+		{
+			var color:uint = FP.getColorHSV(FP.random, 1, 1);
+			setColor(type, color, color);
+		}
 	}
 
 }
