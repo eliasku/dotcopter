@@ -42,6 +42,7 @@ package
 		
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
+		private var _gridAlpha:Number = 0.5;
 		private var _legoMode:Boolean;
 		
 		
@@ -83,7 +84,7 @@ package
 			_gridBitmapData = new BitmapData(w, h, true, 0x00000000);
 			_gridBitmap = new Bitmap(_gridBitmapData, PixelSnapping.NEVER, false);
 			addChild(_gridBitmap);
-			_gridBitmap.alpha = 0.5;
+			_gridBitmap.alpha = _gridAlpha;
 			
 			redrawGrid();
 		}
@@ -190,8 +191,8 @@ package
 			_intermediate.unlock();
 			source.unlock();
 			
-			_t += 0.1;
-			_gridBitmap.alpha = 0.5+0.5*Math.sin(_t*0.05);
+			//_t += 0.1;
+			//_gridBitmap.alpha = 0.5+0.5*Math.sin(_t*0.05);
 		}
 		
 		private static var _t:Number = 0.0; 
@@ -257,6 +258,26 @@ package
 				_legoMode = value;
 				redrawGrid();
 			}
+		}
+
+		public function get gridAlpha():Number
+		{
+			return _gridAlpha;
+		}
+
+		public function set gridAlpha(value:Number):void
+		{
+			if(value < 0.0)
+			{
+				value = 0.0;
+			}
+			else if(value > 1.0)
+			{
+				value = 1.0;
+			}
+			
+			_gridAlpha = value;
+			_gridBitmap.alpha = value;
 		}
 	}
 }
