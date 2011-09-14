@@ -85,11 +85,11 @@ package
 			if (CoptGame.pauseMode) return;
 			
 			if (CoptGame.started) {
-				if (Input.mousePressed) {
+				if (Input.mousePressed || Input.pressed(Key.SPACE)) {
 					boost = true;
 					//SoundManager.play("lift");
 				}
-				if (Input.mouseReleased) {
+				if (Input.mouseReleased || Input.released(Key.SPACE)) {
 					boost = false;
 				}
 				
@@ -230,14 +230,14 @@ package
 		
 		public function damage():void
 		{
-/*			lifes--;
+			lifes--;
 			_game.hud.changeHearts(-1);
 			
 			if (lifes == 0)
 			{
 				destroy();
 			}
-			else*/
+			else
 			{
 				trace("[copter]", "taking damage");
 				

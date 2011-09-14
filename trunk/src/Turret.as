@@ -55,6 +55,8 @@ package
 			setHitboxTo(_tower);
 			
 			type = "turret";
+			
+			layer = ZSort.TURRET;
 		}
 		
 		override public function update():void 

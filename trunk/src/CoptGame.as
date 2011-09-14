@@ -3,6 +3,7 @@ package
 	import land.Landscape;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
 	import net.flashpunk.World;
 	import ui.HUD;
 	/**
@@ -55,7 +56,7 @@ package
 		{	
 			if (CoptGame.pauseMode)
 			{
-				if (Input.mousePressed && test.canClick)
+				if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
 					CoptGame.pauseMode = false;
 				}
@@ -69,7 +70,7 @@ package
 					//if (_t % 30 == 0) create(Block);
 					if (_t % 60 == 0) create(Turret);
 				} 
-				else if (Input.mousePressed && test.canClick && CoptGame.clickable)
+				else if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
 					started = true;
 				}
@@ -118,7 +119,7 @@ package
 		{
 			var turrets:Vector.<Turret> = new Vector.<Turret>();
 			getClass(Turret, turrets);
-			for each (var turret:Block in turrets) 
+			for each (var turret:Turret in turrets) 
 			{
 				turret.destroy();
 			}

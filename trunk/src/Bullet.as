@@ -48,6 +48,8 @@ package
 			setHitbox(2, 2);
 			type = "bullet";
 			
+			layer = ZSort.TURRET;
+			
 			//_g = (turret.flipped) ? 0 : 0.1;
 			//_power = (turret.flipped) ? 3 : 4;
 			_vx = _power * Math.cos(turret.launchDirection);
