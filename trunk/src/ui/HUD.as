@@ -32,7 +32,7 @@ package ui
 		private var _hearts:Vector.<Image> = new Vector.<Image>();
 		private var _heartsData:Array = [];
 		
-		private var _copter:Copter;
+		private var _copter:Heli;
 		
 		public function HUD() 
 		{
@@ -67,7 +67,11 @@ package ui
 			_display.scrollX = 0;
 			_display.scrollY = 0;
 			
+			visible = false;
+			
 			graphic = _display;
+			
+			layer = 0;
 			
 			resetHearts();
 		}

@@ -60,13 +60,15 @@ package land
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingSource(Plain);
+			_pencil.setDrawingSource(Rock);
 			
 			spaceGap = _pencil.drawingMargin;
 			
 			reset();
 			
 			type = "land";
+			
+			layer = 3;
 		}
 		
 		public function reset():void
@@ -153,6 +155,12 @@ package land
 			// -1 to mark for delete
 			
 			return sy;
+		}
+		
+		public function stamp(source:BitmapData, pos:Point):void 
+		{
+			pos.x += _shiftRect.x;
+			_pieces[_cur].copyPixels(source, source.rect, pos);
 		}
 		
 	}

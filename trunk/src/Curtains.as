@@ -22,7 +22,7 @@ package
 		private var _curMode:String;
 		
 		private const BACK_W:int = FP.width;
-		private const BACK_H:int = FP.height - 10;
+		private const BACK_H:int = FP.height;// - 10;
 		
 		private var _delay:int = 30;
 		private var _dir:int = 1;
@@ -47,7 +47,9 @@ package
 			_curtains.scrollX = 0;
 			_curtains.scrollY = 0;
 			
-			super(0, 0, _curtains);	
+			super(0, 0, _curtains);
+			
+			layer = 1;
 			
 			open();
 		}

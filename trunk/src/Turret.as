@@ -1,6 +1,7 @@
 package  
 {
 	import flash.geom.Point;
+	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Graphiclist;
@@ -12,7 +13,8 @@ package
 	 */
 	public class Turret extends Entity 
 	{
-		[Embed(source = '../assets/turret_base.png')] private const BASE:Class;
+		[Embed(source='../assets/turret_tower.png')] private const TOWER:Class;
+		[Embed(source='../assets/turret_gun.png')] private const GUN:Class;
 		
 		public static const DISAPPEAR_OFFSET:int = -72;
 		public static const APPEAR_OFFSET:int = 24;
@@ -21,136 +23,88 @@ package
 		public static const GUN_LENGTH:int = 8;
 
 		public var launchDirection:Number = 0;
-		
-		private var _target:Copter;
-		private var _gun:Image;
-		private var _base:Image;
-		
+
 		private var _degree:Number = 180;
-		private var _speed:int = 2;
 		
-		private var _flipped:Boolean;
-		private var _dir:int;
+		private var _terrain:Landscape;
+		private var _copter:Heli;
 		
-		private var _t:int = 0;
-		private var _line:int = 0;
+		private var _tower:Image;
+		private var _gun:Image;
+		private var _offset:Number;
 		
-		public function Turret(target:Copter, flipped:Boolean = true)
+		private var _fireTime:int = 0;
+		
+		public function Turret()
 		{
-			_target = target;
+			_terrain = CoptGame.instance.terrain;
+			_copter = CoptGame.instance.copter;
 			
-			_base = new Image(BASE);
-			_base.x = -HALF_WIDTH;
+			_tower = new Image(TOWER);
+			_gun = new Image(GUN);
 			
-			_gun = Image.createRect(2, GUN_LENGTH);
 			_gun.originX = 1;
-			_gun.x = -1;
+			_gun.x = 4;
+			_gun.y = 3;
 			
-			var turret:Graphiclist = new Graphiclist(_base, _gun);
+			var turret:Graphiclist = new Graphiclist(_gun, _tower);
+			graphic = turret;
 			
-			super(CoptGame.SCREEN_SIZE + APPEAR_OFFSET, CoptGame.SCREEN_SIZE, turret);
+			reset();
+			
+			setHitboxTo(_tower);
 			
 			type = "turret";
-			
-			flip(flipped);
-		}
-		
-		private function flip(value:Boolean):void
-		{
-			_flipped = value;
-			_base.scaleY = (_flipped) ? -1 : 1;
-			_base.y = (_flipped) ? 3 : -3;
-
-			setHitbox(4, 5, 3, (_flipped) ? 5 : 0);
-			
-			_dir = (_flipped) ? -1 : 1;
 		}
 		
 		override public function update():void 
 		{
-			super.update();
-			
 			if (CoptGame.started && !CoptGame.pauseMode)
 			{
-				x -= _speed;
-				if (x < DISAPPEAR_OFFSET)
-					reset();
+				x -= _terrain.vx;
+				y = _terrain.getPlaceOffset(x + _tower.width * 0.5) - _tower.height * 0.5;
 				
-				if (x > HALF_WIDTH) y += 10 * _dir;
-				var loopCounter:int = 0;
-				while (loopCounter++ != 20) 
+				if (x + _tower.width < 0)
 				{
-					if (collide("land", x, y))
-						y -= 1*_dir;
-					else 
-						break;
+					destroy();
 				}
 				
-				_degree = 90 - Math.atan2(_target.centre.y - y, _target.centre.x - x) / Math.PI * 180;
-				if (_flipped)
-				{
-					if (_degree >= 90 && _degree <= 180) _degree = 90;
-					if (_degree > 180 && _degree <= 270) _degree = -90;
-				}
-				else
-				{
-					if (_degree <= 90) _degree = 90;
-					if (_degree >= 270) _degree = 270;
-				}
+				_fireTime ++;
+				if (_fireTime % 10 == 0)
+					shoot();
+				
+				_degree = 90 - Math.atan2(_copter.centre.y - (y + _tower.height * 0.5), _copter.centre.x - (x + _tower.width * 0.5)) / Math.PI * 180;
+				if (_degree<0) 
+					_degree = 270;
+				else if (_degree>0 && _degree <= 180) 
+					_degree = 180;
 				_gun.angle = _degree;
 				
-				if (_line > 0)
-				{
-					_t++;
-					if (_t == 3)
-					{
-						_t = 0;
-						
-						shoot();
-						_line--;
-					}
-				}
-				
+				super.update();
 			}
 		}
 		
-		public function fire(line:int):void
+		public function destroy():void
 		{
-			_line = line;
+			world.recycle(this);
+			reset();
+		}
+		
+		private function reset():void 
+		{
+			x = FP.width;
+			y = _terrain.getPlaceOffset(x + _tower.width * 0.5) - _tower.height * 0.5;
 		}
 		
 		public function shoot():void
 		{
-			if (_flipped)
-			{
-				if (_target.centre.y < y) return;
-			}
-			else
-			{
-				if (_target.centre.y > y) return;
-			}
+			if (y + _tower.height * 0.5 < _copter.centre.y) return;
+			if (x + _tower.width * 0.5 < _copter.centre.x) return;
 			
-			launchDirection = Math.atan2(_target.centre.y - y, _target.centre.x - x);
-			
-			var bulletEntry:Point = Point.polar(GUN_LENGTH + 1, launchDirection);
-			
+			launchDirection = Math.atan2(_copter.centre.y - (y + _tower.height * 0.5), _copter.centre.x - (x + _tower.width * 0.5));
+			var bulletEntry:Point = Point.polar(GUN_LENGTH, launchDirection);
+			bulletEntry.offset(4, 2);
 			FP.world.add(new Bullet(this, bulletEntry));
-		}
-		
-		public function reset():void 
-		{
-			x = CoptGame.SCREEN_SIZE + APPEAR_OFFSET;
-			y = CoptGame.SCREEN_SIZE;
-			
-			_degree = 90;
-			
-			if (FP.random < 0.5)
-				flip(!_flipped);
-		}
-		
-		public function get flipped():Boolean 
-		{
-			return _flipped;
 		}
 	}
 

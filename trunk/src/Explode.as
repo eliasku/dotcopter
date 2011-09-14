@@ -12,6 +12,8 @@ package
 	 */
 	public class Explode extends Emitter 
 	{
+		public static const SMALL:String = "small";
+		
 		private var _particle:BitmapData;
 		private var _shaker:Shaker;
 		

@@ -33,7 +33,7 @@ package
 		private var _final:BitmapData;
 		
 		private var _motionBlurEnabled:Boolean = true;
-		private var _motionBlurAlpha:Number = 0.4;
+		private var _motionBlurAlpha:Number = 0.8;
 		
 		private var _grainEnabled:Boolean = true;
 		private var _grainDepth:Number = 0.0175;

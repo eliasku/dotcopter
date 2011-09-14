@@ -19,7 +19,7 @@ package
 		
 		private static var _instance:CoptGame;
 		
-		public var copter:Copter;
+		public var copter:Heli;
 		public var terrain:Landscape;
 		public var shaker:Shaker;
 		public var explode:Explode;
@@ -28,8 +28,6 @@ package
 		
 		private var _starLayer1:Starfield;
 		private var _starLayer2:Starfield;
-		private var _pause:Pause;
-		private var _turret:Turret;
 		
 		private var _t:int = 0;
 		
@@ -38,21 +36,17 @@ package
 			if (_instance) return;
 			_instance = this;     
 			
-			_starLayer1 = new Starfield(1, 0.3, 26); addGraphic(_starLayer1);
-			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2);
+/*			_starLayer1 = new Starfield(1, 0.3, 26); addGraphic(_starLayer1);
+			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2);*/
 			shaker = new Shaker();
 			
-			terrain = new Landscape();
-			add(terrain);
+			terrain = new Landscape(); add(terrain); trace("land", terrain.layer);
 			
-			copter = new Copter(); add(copter);
-			//_turret = new Turret(copter); add(_turret);
+			copter = new Heli(); add(copter); trace("copt", copter.layer);
 			explode = new Explode(); addGraphic(explode);
 			
-			_pause = new Pause(); add(_pause); 
-			curtains = new Curtains(); add(curtains);
-
-			hud = new HUD(); add(hud);
+			curtains = new Curtains(); add(curtains); trace("curtains", curtains.layer);
+			hud = new HUD(); add(hud); trace("hud", hud.layer);
 		}
 		
 		override public function update():void 
@@ -61,7 +55,6 @@ package
 			{
 				if (Input.mousePressed && test.canClick)
 				{
-					_pause.visible = false;
 					CoptGame.pauseMode = false;
 				}
 				return;
@@ -71,17 +64,8 @@ package
 				{
 					_t++;
 					if (_t % 2 == 0) HUD.score++;
-					
-					//if (_t % 15 == 0) create(Block);
-					
-					if (_turret)
-					{
-						if (_t == 15)
-						{
-							_t = 0;
-							_turret.fire(1);
-						}
-					}
+					//if (_t % 30 == 0) create(Block);
+					if (_t % 60 == 0) create(Turret);
 				} 
 				else if (Input.mousePressed && test.canClick && CoptGame.clickable)
 				{
@@ -95,7 +79,6 @@ package
 		
 		public function stopGame():void
 		{
-			_pause.visible = true;
 			CoptGame.pauseMode = true;
 		}
 		
@@ -106,8 +89,10 @@ package
 			terrain.reset();
 			copter.reset();
 			
-			if (_turret) _turret.reset();
+			resetBlocks();
+			resetTurrets();
 			
+			// save score
 /*			if (HUD.score > HUD.best) {
 				HUD.best = HUD.score;
 				
@@ -115,6 +100,26 @@ package
 				Data.save("score");
 			}*/
 			HUD.score = 0;
+		}
+		
+		private function resetBlocks():void 
+		{
+			var blocks:Vector.<Block> = new Vector.<Block>();
+			getClass(Block, blocks);
+			for each (var block:Block in blocks) 
+			{
+				block.destroy();
+			}
+		}
+		
+		private function resetTurrets():void 
+		{
+			var turrets:Vector.<Turret> = new Vector.<Turret>();
+			getClass(Turret, turrets);
+			for each (var turret:Block in turrets) 
+			{
+				turret.destroy();
+			}
 		}
 		
 		static public function get instance():CoptGame
