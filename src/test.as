@@ -16,8 +16,8 @@ package
 	[SWF(backgroundColor="#000000", width="720", height="405", frameRate="30")]
 	public class test extends Sprite 
 	{
-		public static const COLS:int = 240;
-		public static const ROWS:int = 240/16*9;
+		public static const COLS:int = 160;
+		public static const ROWS:int = 90;
 		
 		public static var canClick:Boolean = true;
 		
