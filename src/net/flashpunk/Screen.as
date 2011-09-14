@@ -20,8 +20,8 @@
 		public function Screen() 
 		{
 			// create screen buffers
-			_bitmap[0] = new Bitmap(new BitmapData(FP.width, FP.height, true, 0), PixelSnapping.NEVER);
-			_bitmap[1] = new Bitmap(new BitmapData(FP.width, FP.height, true, 0), PixelSnapping.NEVER);
+			_bitmap[0] = new Bitmap(new BitmapData(FP.width, FP.height, false, 0), PixelSnapping.NEVER);
+			_bitmap[1] = new Bitmap(new BitmapData(FP.width, FP.height, false, 0), PixelSnapping.NEVER);
 			FP.engine.addChild(_sprite);
 			_sprite.addChild(_bitmap[0]).visible = true;
 			_sprite.addChild(_bitmap[1]).visible = false;
@@ -77,7 +77,7 @@
 		 * Refresh color of the screen.
 		 */
 		public function get color():uint { return _color; }
-		public function set color(value:uint):void { _color = value; }
+		public function set color(value:uint):void { _color = 0xff000000 | value; }
 		
 		/**
 		 * X offset of the screen.
