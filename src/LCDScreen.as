@@ -171,15 +171,13 @@ package
 			{
 				_grain.lock();
 				
-				if(_grainSkip > 0)
+				if(_grainSkip & 0x1)
 				{
-					_grain.noise(_t*30.0, 0, _grainDepth*255, 7, true);
-					_grainSkip = 0;
+					_t += 0.1;
+					_grain.noise(_grainSkip, 0, _grainDepth*255, 7, true);
 				}
-				else
-				{
-					_grainSkip = 1;
-				}
+				
+				++_grainSkip;
 				
 				_final.draw(_grain, null, null, BlendMode.ADD);
 				
@@ -191,7 +189,7 @@ package
 			_intermediate.unlock();
 			source.unlock();
 			
-			//_t += 0.1;
+			
 			//_gridBitmap.alpha = 0.5+0.5*Math.sin(_t*0.05);
 		}
 		
