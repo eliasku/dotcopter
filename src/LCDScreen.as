@@ -37,11 +37,12 @@ package
 		
 		private var _grainEnabled:Boolean = true;
 		private var _grainDepth:Number = 0.0175;
-		private var _grainBitmapData:BitmapData;
+		private var _grain:BitmapData;
 		private var _grainSkip:int;
 		
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
+		private var _legoMode:Boolean;
 		
 		
 		
@@ -69,7 +70,7 @@ package
 			_buffer = new BitmapData(_cols, _rows, false, 0);
 			_intermediate = new BitmapData(_cols, _rows, false, 0);
 			_final = new BitmapData(_cols, _rows, false, 0);
-			_grainBitmapData = new BitmapData(_cols, _rows, false, 0);
+			_grain = new BitmapData(_cols, _rows, false, 0);
 			
 			_bufferBitmap = new Bitmap(_final, PixelSnapping.NEVER, false);
 			_bufferBitmap.scaleX = CELL_WIDTH + SPACE_X;
@@ -80,15 +81,26 @@ package
 			// create grid
 			
 			_gridBitmapData = new BitmapData(w, h, true, 0x00000000);
+			_gridBitmap = new Bitmap(_gridBitmapData, PixelSnapping.NEVER, false);
+			addChild(_gridBitmap);
+			_gridBitmap.alpha = 0.5;
 			
-			var i:int;
-			var d:int;
-			var legoMode:Boolean = false;
-			
-			var rc:Rectangle = new Rectangle();
+			redrawGrid();
+		}
+		
+		private function redrawGrid():void
+		{
+			const w:int = _cols*(CELL_WIDTH + SPACE_X);
+			const h:int = _rows*(CELL_HEIGHT + SPACE_Y);
 			const gridColor:uint = BACKGROUND_COLOR;
+			var i:int;
+			var rc:Rectangle = new Rectangle();
+			
+			_gridBitmapData.lock();
+			_gridBitmapData.fillRect(_gridBitmapData.rect, 0x00000000);
+			
 			rc.height = 1;
-			if(legoMode) rc.height += 1;
+			if(_legoMode) rc.height += 1;
 			rc.width = w;
 			rc.x = 0;
 			
@@ -100,7 +112,7 @@ package
 			
 			rc.height = h;
 			rc.width = 1;
-			if(legoMode) rc.width += 1;
+			if(_legoMode) rc.width += 1;
 			rc.y = 0;
 			
 			for(i = 0; i < _cols; ++i)
@@ -109,9 +121,7 @@ package
 				_gridBitmapData.fillRect(rc, gridColor);
 			}
 			
-			_gridBitmap = new Bitmap(_gridBitmapData, PixelSnapping.NEVER, false);
-			addChild(_gridBitmap);
-			_gridBitmap.alpha = 0.5;
+			_gridBitmapData.unlock();
 		}
 		
 		public function get screenWidth():int
@@ -158,9 +168,11 @@ package
 				
 			if(_grainEnabled && _grainDepth > 0.0)
 			{
+				_grain.lock();
+				
 				if(_grainSkip > 0)
 				{
-					_grainBitmapData.noise(_t*30.0, 0, _grainDepth*255, 7, true);
+					_grain.noise(_t*30.0, 0, _grainDepth*255, 7, true);
 					_grainSkip = 0;
 				}
 				else
@@ -168,14 +180,15 @@ package
 					_grainSkip = 1;
 				}
 				
-				_final.draw(_grainBitmapData, null, null, BlendMode.ADD);
+				_final.draw(_grain, null, null, BlendMode.ADD);
+				
+				_grain.unlock();
 			}
 			
 			_final.unlock();
 			_buffer.unlock();
 			_intermediate.unlock();
 			source.unlock();
-			
 			
 			_t += 0.1;
 			_gridBitmap.alpha = 0.5+0.5*Math.sin(_t*0.05);
@@ -230,6 +243,20 @@ package
 		public function set grainDepth(value:Number):void
 		{
 			_grainDepth = value;
+		}
+
+		public function get legoMode():Boolean
+		{
+			return _legoMode;
+		}
+
+		public function set legoMode(value:Boolean):void
+		{
+			if(_legoMode != value)
+			{
+				_legoMode = value;
+				redrawGrid();
+			}
 		}
 	}
 }
