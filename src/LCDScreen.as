@@ -37,9 +37,13 @@ package
 		
 		private var _grainEnabled:Boolean = true;
 		private var _grainDepth:Number = 0.0175;
+		private var _grainBitmapData:BitmapData;
+		private var _grainSkip:int;
 		
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
+		
+		
 		
 		public function LCDScreen(columns:int = 96, rows:int = 96)
 		{
@@ -65,6 +69,7 @@ package
 			_buffer = new BitmapData(_cols, _rows, false, 0);
 			_intermediate = new BitmapData(_cols, _rows, false, 0);
 			_final = new BitmapData(_cols, _rows, false, 0);
+			_grainBitmapData = new BitmapData(_cols, _rows, false, 0);
 			
 			_bufferBitmap = new Bitmap(_final, PixelSnapping.NEVER, false);
 			_bufferBitmap.scaleX = CELL_WIDTH + SPACE_X;
@@ -153,8 +158,17 @@ package
 				
 			if(_grainEnabled && _grainDepth > 0.0)
 			{
-				_intermediate.noise(_t*30.0, 0, _grainDepth*255, 7, true);
-				_final.draw(_intermediate, null, null, BlendMode.ADD);
+				if(_grainSkip > 0)
+				{
+					_grainBitmapData.noise(_t*30.0, 0, _grainDepth*255, 7, true);
+					_grainSkip = 0;
+				}
+				else
+				{
+					_grainSkip = 1;
+				}
+				
+				_final.draw(_grainBitmapData, null, null, BlendMode.ADD);
 			}
 			
 			_final.unlock();
@@ -203,9 +217,9 @@ package
 			return _grainEnabled;
 		}
 
-		public function set grainEnabled(grainEnabled:Boolean):void
+		public function set grainEnabled(value:Boolean):void
 		{
-			_grainEnabled = grainEnabled;
+			_grainEnabled = value;
 		}
 
 		public function get grainDepth():Number
@@ -213,9 +227,9 @@ package
 			return _grainDepth;
 		}
 
-		public function set grainDepth(grainDepth:Number):void
+		public function set grainDepth(value:Number):void
 		{
-			_grainDepth = grainDepth;
+			_grainDepth = value;
 		}
 	}
 }
