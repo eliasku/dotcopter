@@ -2,21 +2,19 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.Graphics;
+	import flash.display.BlendMode;
 	import flash.display.PixelSnapping;
-	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.ByteArray;
 
 	/**
 	 * @author Ilya.Kuzmichev
 	 */
 	public class LCDScreen extends Sprite
 	{
-		//private static const CELL_COLOR:uint = 0x000000;//0x333366;
-		private static const SPACE_COLOR:uint = 0x000000;//0x090909;
+		private static const BACKGROUND_COLOR:uint = 0xff000000;
 		
 		private static const CELL_WIDTH:int = 2;
 		private static const CELL_HEIGHT:int = 2;
@@ -26,190 +24,89 @@ package
 		
 		private var _cols:int;
 		private var _rows:int;
-		
-		private var _shape:Shape = new Shape();
-		private var _buffer:BitmapData;
-		//private var _screen:BitmapData;
-		private var _trails:Vector.<uint>;
-		private var _bitmap:Bitmap;
-		
 		private var _size:Rectangle;
+		
+		private var _bufferBitmap:Bitmap;
+		
+		private var _buffer:BitmapData;
+		private var _intermediate:BitmapData;
+		private var _final:BitmapData;
+		
+		private var _motionBlurEnabled:Boolean = true;
+		private var _motionBlurAlpha:Number = 0.4;
+		
+		private var _grainEnabled:Boolean = true;
+		private var _grainDepth:Number = 0.0175;
+		
+		private var _gridBitmapData:BitmapData;
+		private var _gridBitmap:Bitmap;
 		
 		public function LCDScreen(columns:int = 96, rows:int = 96)
 		{
+			initialize(columns, rows);
+		}
+
+		private function initialize(columns:int, rows:int):void
+		{
+			const w:int = columns*(CELL_WIDTH + SPACE_X);
+			const h:int = rows*(CELL_HEIGHT + SPACE_Y);
+			
+			// initialize consts
 			_cols = columns;
 			_rows = rows;
-			_size = new Rectangle(0, 0, _cols*(CELL_WIDTH+SPACE_X), _rows*(CELL_HEIGHT+SPACE_Y));
+			_size = new Rectangle(0, 0, w, h);
 			
-			opaqueBackground = 0x000000;
+			// setup display
+			opaqueBackground = BACKGROUND_COLOR;
 			//scrollRect = _size;
 			//cacheAsBitmap = true;
 			
-			_buffer = new BitmapData(_size.width, _size.height, false, 0);
-			//_screen = new BitmapData(_size.width, _size.height, false, 0);
-			_bitmap = new Bitmap(_buffer, PixelSnapping.NEVER, false);
+			// create buffers
+			_buffer = new BitmapData(_cols, _rows, false, 0);
+			_intermediate = new BitmapData(_cols, _rows, false, 0);
+			_final = new BitmapData(_cols, _rows, false, 0);
 			
-			addChild(_bitmap);
-			addChild(_shape);
-			_shape.alpha = 0.5;
+			_bufferBitmap = new Bitmap(_final, PixelSnapping.NEVER, false);
+			_bufferBitmap.scaleX = CELL_WIDTH + SPACE_X;
+			_bufferBitmap.scaleY = CELL_HEIGHT + SPACE_Y;
+			
+			addChild(_bufferBitmap);
+			
+			// create grid
+			
+			_gridBitmapData = new BitmapData(w, h, true, 0x00000000);
 			
 			var i:int;
-			var offset:int;
-			var g:Graphics = _shape.graphics;
+			var d:int;
+			var legoMode:Boolean = false;
 			
-			g.lineStyle(SPACE_Y, SPACE_COLOR);
-			while (i < _rows)
+			var rc:Rectangle = new Rectangle();
+			const gridColor:uint = BACKGROUND_COLOR;
+			rc.height = 1;
+			if(legoMode) rc.height += 1;
+			rc.width = w;
+			rc.x = 0;
+			
+			for(i = 0; i < _rows; ++i)
 			{
-				offset = (i+1)*(CELL_HEIGHT+SPACE_X) - 1;
-				g.moveTo(0, offset);
-				g.lineTo(_size.width, offset);
-				++i;
+				rc.y = (i+1)*(CELL_HEIGHT+SPACE_X) - 1;
+				_gridBitmapData.fillRect(rc, gridColor);
 			}
 			
-			g.lineStyle(SPACE_X, SPACE_COLOR);
-			i = 0;
-			while(i < _cols)
+			rc.height = h;
+			rc.width = 1;
+			if(legoMode) rc.width += 1;
+			rc.y = 0;
+			
+			for(i = 0; i < _cols; ++i)
 			{
-				offset = (i+1)*(CELL_WIDTH+SPACE_Y) - 1;
-				g.moveTo(offset, 0);
-				g.lineTo(offset, _size.height);
-				++i;
+				rc.x = (i+1)*(CELL_WIDTH+SPACE_Y) - 1;
+				_gridBitmapData.fillRect(rc, gridColor);
 			}
 			
-			//_shape.graphics.clear();
-			
-			_trails = new Vector.<uint>(_cols*_rows, true);
-			i = 0;
-			while(i < _cols*_rows)
-			{
-				_trails[i] = 0x0;
-				++i;
-			}
-		}
-			
-		public function draw(source:BitmapData, sourceRect:Rectangle):void
-		{
-			if(!sourceRect) sourceRect = source.rect;
-			if(sourceRect.width > _cols) sourceRect.width = _cols;
-			if(sourceRect.height > _rows) sourceRect.height = _rows;
-			
-			_buffer.lock();
-			//_screen.lock();
-			source.lock();
-			
-			//_buffer.fillRect(_buffer.rect, 0x00000000);
-			
-			var bytes:ByteArray = source.getPixels(sourceRect);
-			bytes.position = 0;
-			
-			var i:int, j:int, k:int;
-			const rc:Rectangle = new Rectangle(0, 0, CELL_WIDTH+ SPACE_X, CELL_HEIGHT+ SPACE_Y);
-			//const rc2:Rectangle = new Rectangle(0, 0, CELL_WIDTH + SPACE_X, CELL_HEIGHT + SPACE_Y);
-			
-			const spx:int = CELL_WIDTH + SPACE_X;
-			const spy:int = CELL_HEIGHT + SPACE_Y;
-			
-			//const t:Number = 0.65;
-			var des:Number = 0.0;
-			
-			var trail:uint, ta:uint, tr:uint, tg:uint, tb:uint;
-			var color:uint, ca:uint, cr:uint, cg:uint, cb:uint;
-			
-			while(j < _rows)
-			{
-				rc.x = 0.0;
-				//rc2.x = 0.0;
-				i = 0;
-					
-				while(i < _cols)
-				{
-					trail = _trails[k];
-					color = bytes.readUnsignedInt();
-					
-					ta = ((trail >> 24) & 0xff) >> 1;
-					tr = ((trail >> 16) & 0xff) >> 1;
-					tg = ((trail >> 8) & 0xff) >> 1;
-					tb = (trail & 0xff) >> 1;
-					
-					ca = color >> 24 & 0xff;
-					cr = color >> 16 & 0xff;
-					cg = color >> 8 & 0xff;
-					cb = color & 0xff;
-					//ca*=des;cr*=des;cg*=des;cb*=des;
-					
-					if(ca > ta) ta = ca;
-					if(cr > tr) tr = cr;
-					if(cg > tg) tg = cg;
-					if(cb > tb) tb = cb;
-					/*if(ca > ta)
-					{
-						ta += (ca - ta) >> 1;
-						if(ta > ca) ta = ca;
-					}
-					if(cr > tr)
-					{
-						tr += (cr - tr) >> 1;
-						if(tr > cr) tr = cr;
-					}
-					if(cg > tg)
-					{
-						tg += (cg - tg) >> 1;
-						if(tg > cg) tg = cg;
-					}
-					if(cb > tb)
-					{
-						tb += (cb - tb) >> 1;
-						if(tb > cb) tb = cb;
-					}*/
-					
-					des = 1.0+0.1*Math.random();
-					ta = (ta*des);
-					if(ta > 255) ta = 255;
-					//des = 0.1+0.1*Math.random();
-					tr = (tr*des);
-					if(tr > 255) tr = 255;
-					//des = 0.1+0.1*Math.random();
-					tg = (tg*des);
-					if(tg > 255) tg = 255;
-					//des = 0.15+0.5*Math.random();
-					tb = (tb*des);
-					if(tb > 255) tb = 255;
-					
-					color = (ta << 24) | (tr << 16) | (tg << 8) | tb;
-					
-					_trails[k] = color;
-					
-					if(ta > 0)
-					{
-						_buffer.fillRect(rc, color);
-					}
-					
-					rc.x += spx;
-					
-					++k;
-					++i;
-				}
-				
-				rc.y += spy;
-				//rc2.y += spy;
-				
-				++j;
-			}
-			
-			
-			
-			var p:Point = new Point();
-			const blurSize:Number = 6.0;
-			//_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.HIGH));
-			//_screen.copyPixels(_buffer, _buffer.rect, p, null, null, true);
-			//_screen.draw(_buffer, null, null, BlendMode.NORMAL);
-			//_screen.applyFilter(_buffer, _buffer.rect, p, new BlurFilter(blurSize, blurSize, BitmapFilterQuality.LOW));
-			//_screen.draw(_buffer, null, null, BlendMode.OVERLAY);
-			//_screen.copyPixels(_buffer, _buffer.rect, p, null, null, true);
-			
-			source.unlock();
-			//_screen.unlock();
-			_buffer.unlock();
+			_gridBitmap = new Bitmap(_gridBitmapData, PixelSnapping.NEVER, false);
+			addChild(_gridBitmap);
+			_gridBitmap.alpha = 0.5;
 		}
 		
 		public function get screenWidth():int
@@ -220,6 +117,105 @@ package
 		public function get screenHeight():int
 		{
 			return _size.height;
+		}
+
+		public function draw(source:BitmapData, rect:Rectangle):void
+		{
+			if(!source)
+			{
+				_buffer.fillRect(_buffer.rect, BACKGROUND_COLOR);
+				return;
+			}
+			
+			if(!rect) rect = source.rect;
+			if(rect.width > _cols) rect.width = _cols;
+			if(rect.height > _rows) rect.height = _rows;
+			
+			var p:Point = new Point();
+			var ct:ColorTransform = new ColorTransform(1.0, 1.0, 1.0, _motionBlurAlpha);
+			
+			_final.lock();
+			_buffer.lock();
+			_intermediate.lock();
+			source.lock();
+			
+			
+			if(_motionBlurEnabled)
+			{
+				_intermediate.copyPixels(source, source.rect, p);
+				_buffer.draw(_intermediate, null, ct);
+				_final.copyPixels(_buffer, _buffer.rect, p);
+			}
+			else
+			{
+				_final.copyPixels(source, rect, p);
+			}
+				
+			if(_grainEnabled && _grainDepth > 0.0)
+			{
+				_intermediate.noise(_t*30.0, 0, _grainDepth*255, 7, true);
+				_final.draw(_intermediate, null, null, BlendMode.ADD);
+			}
+			
+			_final.unlock();
+			_buffer.unlock();
+			_intermediate.unlock();
+			source.unlock();
+			
+			
+			_t += 0.1;
+			_gridBitmap.alpha = 0.5+0.5*Math.sin(_t*0.05);
+		}
+		
+		private static var _t:Number = 0.0; 
+		
+		public function get motionBlurAlpha():Number
+		{
+			return _motionBlurAlpha;
+		}
+
+		public function set motionBlurAlpha(value:Number):void
+		{
+			if(value < 0.4)
+			{
+				value = 0.4;
+			}
+			else if(value > 1.0)
+			{
+				value = 1.0;
+			}
+			
+			_motionBlurAlpha = value;
+		}
+
+		public function get motionBlur():Boolean
+		{
+			return _motionBlurEnabled;
+		}
+
+		public function set motionBlur(value:Boolean):void
+		{
+			_motionBlurEnabled = value;
+		}
+
+		public function get grainEnabled():Boolean
+		{
+			return _grainEnabled;
+		}
+
+		public function set grainEnabled(grainEnabled:Boolean):void
+		{
+			_grainEnabled = grainEnabled;
+		}
+
+		public function get grainDepth():Number
+		{
+			return _grainDepth;
+		}
+
+		public function set grainDepth(grainDepth:Number):void
+		{
+			_grainDepth = grainDepth;
 		}
 	}
 }
