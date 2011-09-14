@@ -12,6 +12,5 @@ package
 		public static const TURRET:int = 3;
 		public static const LANDSCAPE:int = 4;
 		public static const BG:int = 5;
-		public static const STARS:int = 6;
 	}
 }
