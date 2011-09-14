@@ -36,17 +36,19 @@ package
 			if (_instance) return;
 			_instance = this;     
 			
-/*			_starLayer1 = new Starfield(1, 0.3, 26); addGraphic(_starLayer1);
-			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2);*/
 			shaker = new Shaker();
 			
-			terrain = new Landscape(); add(terrain); trace("land", terrain.layer);
+			terrain = new Landscape(); add(terrain); 
 			
-			copter = new Heli(); add(copter); trace("copt", copter.layer);
+			copter = new Heli(); add(copter); 
 			explode = new Explode(); addGraphic(explode);
 			
-			curtains = new Curtains(); add(curtains); trace("curtains", curtains.layer);
-			hud = new HUD(); add(hud); trace("hud", hud.layer);
+			curtains = new Curtains(); add(curtains);
+			hud = new HUD(); add(hud);
+			
+			var back:Background = new Background(); addGraphic(back, ZSort.BG);
+			_starLayer1 = new Starfield(1, 0.3, 26); addGraphic(_starLayer1, ZSort.STARS);
+			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2, ZSort.STARS);
 		}
 		
 		override public function update():void 

@@ -68,7 +68,7 @@ package land
 			
 			type = "land";
 			
-			layer = 3;
+			layer = ZSort.LANDSCAPE;
 		}
 		
 		public function reset():void
