@@ -47,9 +47,7 @@ package
 			curtains = new Curtains(); add(curtains);
 			hud = new HUD(); add(hud);
 			
-			var back:Background = new Background(); addGraphic(back, ZSort.BG);
-			_starLayer1 = new Starfield(1, 0.3, 26); addGraphic(_starLayer1, ZSort.STARS);
-			_starLayer2 = new Starfield(2, 0.6, 13); addGraphic(_starLayer2, ZSort.STARS);
+			new Background();
 		}
 		
 		override public function update():void 

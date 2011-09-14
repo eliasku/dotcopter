@@ -39,6 +39,20 @@ package
 				sound.play(vol, pan);
 		}
 		
+		public static function loop(id:String, vol:Number = 1.0, pan:Number = 0.0):void
+		{
+			var sound:Sfx = getSound(id);
+			if (sound) 
+				sound.loop();
+		}
+		
+		public static function setVolume(id:String, value:Number):void
+		{
+			var sound:Sfx = getSound(id);
+			if (sound) 
+				sound.volume = value;
+		}
+		
 	}
 
 }
