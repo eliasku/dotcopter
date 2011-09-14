@@ -22,7 +22,7 @@ package
 			starNum = $starNum;
 			stars = new BitmapData(FP.width, FP.height*2, true, 0x00000000);
 			for (var i:int = 0; i < starNum; i++) {
-				stars.setPixel32(Math.random() * FP.width, Math.random() * FP.height*2, 0xFFFFFFFF);
+				stars.setPixel32(FP.random * FP.width, FP.random * FP.height*2, 0xFFFFFFFF);
 			}
 			super(stars, true);
 			this.alpha = $alpha;

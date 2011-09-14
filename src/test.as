@@ -13,11 +13,11 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	[SWF(backgroundColor="#000000", width="480", height="360", frameRate="30")]
+	[SWF(backgroundColor="#000000", width="720", height="405", frameRate="30")]
 	public class test extends Sprite 
 	{
-		public static const COLS:int = 120;
-		public static const ROWS:int = 90;
+		public static const COLS:int = 240;
+		public static const ROWS:int = 240/16*9;
 		
 		public static var canClick:Boolean = true;
 		
@@ -30,6 +30,7 @@ package
 		{
 			_screen = new LCDScreen(COLS, ROWS);
 			_screen.x = _screen.y;
+			//_screen.legoMode = true;
 			stage.addChild(_screen);
 			
 			_main = new Main();
@@ -39,6 +40,8 @@ package
 			SWFProfiler.init(stage, this);
 			
 			stage.fullScreenSourceRect = new Rectangle(0, 0, _screen.screenWidth, _screen.screenHeight);
+			
+			trace(COLS, ROWS, _screen.screenWidth, _screen.screenHeight)
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}

@@ -9,6 +9,7 @@ package
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Graphiclist;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.masks.Pixelmask;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.utils.Input;
@@ -18,21 +19,21 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Copter extends Entity
+	public class Heli extends Entity
 	{
-		public const SPRITE_WIDTH:Number = 10;
-		public const SPRITE_HEIGHT:Number = 9;
+		public const SPRITE_WIDTH:Number = 12;
+		public const SPRITE_HEIGHT:Number = 10;
 		
-		[Embed(source = '../assets/copter_single.png')] private const HELI:Class;
-		[Embed(source = '../assets/copter_mask.png')] private const COPTER_MASK:Class;
+		[Embed(source = '../assets/heli.png')] private const HELI:Class;
+		[Embed(source = '../assets/heli_mask.png')] private const COPTER_MASK:Class;
+		
+		private var _copterSpriteMap:Spritemap;
 		
 		public var maxLifes:int = 3;
 		public var lifes:int;
 		
 		private var coptMask:Image;
 		private var copt:Image;
-		public var _rotor:Image;
-		private var playerShip:Graphiclist;
 		
 		private var vy:Number = 0;
 		private var ay:Number = -0.35;
@@ -56,7 +57,7 @@ package
 		private var _upLim:int = 0;
 		private var _downLim:int = Landscape.PIECE_HEIGHT;
 		
-		public function Copter() 
+		public function Heli() 
 		{
 			_game = CoptGame.instance;
 			
@@ -64,10 +65,11 @@ package
 			var down:int = _game.terrain.getPlaceOffset(x + 5);
 			y = down - _game.terrain.spaceGap * 0.5;
 			
-			copt = new Image(HELI);
-			_rotor = Image.createRect(9, 1); _rotor.x = 1;
-			playerShip = new Graphiclist(copt, _rotor); 
-			graphic = playerShip;
+			_copterSpriteMap = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT); 
+			_copterSpriteMap.add("fly", [0, 1, 2, 3, 4], 2, true);
+			graphic = _copterSpriteMap;
+			
+			_copterSpriteMap.play("fly");
 			
 			coptMask = new Image(COPTER_MASK);
 			mask = new Pixelmask(coptMask.source);
@@ -75,6 +77,7 @@ package
 			
 			lifes = maxLifes;
 			
+			layer = 2;
 		}
 		
 		override public function update():void
@@ -84,6 +87,7 @@ package
 			if (CoptGame.started) {
 				if (Input.mousePressed) {
 					boost = true;
+					//SoundManager.play("lift");
 				}
 				if (Input.mouseReleased) {
 					boost = false;
@@ -108,10 +112,9 @@ package
 				else if (vy < -maxspeed)
 					vy = -maxspeed;
 					
-				copt.angle = -vy * 5;
-				_rotor.angle = -vy * 5;
+				_copterSpriteMap.angle = -vy * 4;
 				// update pixelmask
-				coptMask.angle = copt.angle;
+				coptMask.angle = _copterSpriteMap.angle;
 				mask = new Pixelmask(coptMask.source);
 				
 				_t ++;
@@ -120,20 +123,35 @@ package
 				
 				if (!isGod())
 				{
-					_rotor.visible = (_t % 2 == 0) ? true : false;
 					if (collide("land", x, y))
 					{
 						dodge();
 					}
-					if (collide("bullet", x, y))
+					
+					var bullet:Bullet = collide("bullet", x, y) as Bullet;
+					if (bullet)
+					{
+						bullet.destroy();
+						
 						damage();
+					}
+						
+					var block:Block = collide("block", x, y) as Block;
+					if (block)
+					{
+						_game.terrain.stamp(block.clone(), block.pos);
+						
+						block.destroy();
+						
+						damage();
+					}
 				}
 				
 				y += vy;
 				
 				if (isGod())
 				{
-					var down:int = _game.terrain.getPlaceOffset(x + 5);
+					var down:int = _game.terrain.getPlaceOffset(x + 6);
 					var up:int = down - _game.terrain.spaceGap;
 					
 					if (y + 8 > down)
@@ -163,7 +181,7 @@ package
 		
 		private function dodge():void 
 		{
-			var down:int = _game.terrain.getPlaceOffset(x + 5);
+			var down:int = _game.terrain.getPlaceOffset(x + 6);
 			var up:int = down - _game.terrain.spaceGap;
 			
 			var middle:int = (up + down) * 0.5;
@@ -178,6 +196,8 @@ package
 				if (vy < 0) vy *= -1;
 			}
 			
+			trace("[copter]", "dodging");
+			
 			damage();
 		}
 		
@@ -189,19 +209,16 @@ package
 			godMode(-1);
 			
 			fraged = true;
-			_rotor.visible = true;
 		}
 		
 		public function reset():void
 		{
 			if (fragAmt > fragLim) fragAmt--;
-			copt.angle = 0;
-			_rotor.angle = 0;
+			_copterSpriteMap.angle = 0;
 			visible = true;
-			_rotor.visible = true;
 			_t = 0;
 			
-			var down:int = _game.terrain.getPlaceOffset(x + 5);
+			var down:int = _game.terrain.getPlaceOffset(x + 6);
 			y = down - _game.terrain.spaceGap * 0.5;
 			vy = 0;
 			
@@ -213,19 +230,21 @@ package
 		
 		public function damage():void
 		{
-			lifes--;
+/*			lifes--;
 			_game.hud.changeHearts(-1);
 			
 			if (lifes == 0)
 			{
 				destroy();
 			}
-			else
+			else*/
 			{
+				trace("[copter]", "taking damage");
+				
 				SoundManager.play("kick");
 				
 				_game.explode.detonate("small", centre, 25);
-				_game.terrain.makeHole(centre);
+				_game.terrain.makeHole(centre, 10);
 				_game.shaker.perform(0.02, 6);
 				
 				godMode();
@@ -255,7 +274,6 @@ package
 				else
 				{
 					visible = (_t % 4 == 0) ? true : false;
-					_rotor.visible = true;
 				}
 			}
 		}
@@ -276,7 +294,7 @@ package
 		
 		public function get centre():Point
 		{ 
-			_centre.x = x + 5;
+			_centre.x = x + 6;
 			_centre.y = y + 5;
 			return _centre;
 		}

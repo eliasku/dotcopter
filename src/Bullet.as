@@ -1,6 +1,8 @@
 package  
 {
+	import draw.Pencil;
 	import flash.geom.Point;
+	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Image;
@@ -16,7 +18,7 @@ package
 		
 		private var _power:Number = 4;
 		
-		private var _g:Number;
+		private var _g:Number = 0.1;
 		private var _vx:Number;
 		private var _vy:Number;
 		private var _dx:Number = 0;
@@ -24,18 +26,19 @@ package
 		
 		private var _startPos:Point;
 		private var _targetOriginX:Number;
+		private var _terrain:Landscape;
+		
+		private var _pos:Point = new Point();
 		
 		public function Bullet(turret:Turret, startPos:Point) 
 		{
 			_turret = turret;
 			_startPos = startPos;
 			
-			//_rocks = CoptGame(FP.world).land;
+			_terrain = CoptGame(FP.world).terrain;
 			_explode = CoptGame(FP.world).explode;
 			
-			var image:Image = Image.createRect(2, 2); 
-			image.originX = 1;
-			image.originY = 1;
+			var image:Image = Image.createRect(2, 2, Pencil.RED); 
 			image.alpha = 0.8;
 			
 			super(_turret.x + _startPos.x, _turret.y + _startPos.y, image);
@@ -45,8 +48,8 @@ package
 			setHitbox(2, 2);
 			type = "bullet";
 			
-			_g = (turret.flipped) ? 0 : 0.1;
-			_power = (turret.flipped) ? 3 : 4;
+			//_g = (turret.flipped) ? 0 : 0.1;
+			//_power = (turret.flipped) ? 3 : 4;
 			_vx = _power * Math.cos(turret.launchDirection);
 			_vy = _power * Math.sin(turret.launchDirection);
 		}
@@ -55,33 +58,40 @@ package
 		{
 			super.update();
 			
-			_vy += _g;
-			
-			_dx += _vx;
-			_dy += _vy;
-			
-			x = _turret.x + _startPos.x + _dx;
-			y = _turret.y + _startPos.y + _dy;
-			
-			if (_turret.x > _targetOriginX || x < 0)
-				FP.world.remove(this);
+			if (_turret)
+			{
+				_vy += _g;
 				
-			if (collide("land", x, y))
-			{
-				//_rocks.makeHole(getCentre(), 5);
-				_explode.burst(getCentre());
-				FP.world.remove(this);
+				_dx += _vx;
+				_dy += _vy;
+				
+				x = _turret.x + _startPos.x + _dx;
+				y = _turret.y + _startPos.y + _dy;
+				
+				if (_turret.x > _targetOriginX || x < 0)
+					destroy();
+					
+				if (collide("land", x, y))
+				{
+					_terrain.makeHole(getPos(), 5);
+					_explode.detonate(Explode.SMALL, getPos(), 20);
+					destroy();
+				}
 			}
-			
-			if (collide("copter", x, y))
-			{
-				FP.world.remove(this);
-			}
+			else
+				destroy();
 		}
 		
-		private function getCentre():Point
+		public function destroy():void
 		{
-			return new Point(x + 1, y + 1);
+			FP.world.remove(this);
+		}
+		
+		private function getPos():Point
+		{
+			_pos.x = x + 1;
+			_pos.y = y + 1;
+			return _pos;
 		}
 	}
 }
