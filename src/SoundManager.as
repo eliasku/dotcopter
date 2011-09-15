@@ -7,7 +7,10 @@ package
 	 */
 	public class SoundManager 
 	{
-		[Embed(source='../assets/sound/kick.mp3')] private static const KICK:Class;
+		[Embed(source='../assets/sound/boom.mp3')] private static const BOOM:Class;
+		[Embed(source = '../assets/sound/kick.mp3')] private static const KICK:Class;
+		[Embed(source = '../assets/sound/lift_up.mp3')] private static const LIFT_UP:Class;
+		[Embed(source = '../assets/sound/lift_down.mp3')] private static const LIFT_DOWN:Class;
 		
 		private static var _sounds:Object;
 		
@@ -15,7 +18,10 @@ package
 		{
 			_sounds = { };
 			
+			addSound("boom", BOOM);
 			addSound("kick", KICK);
+			addSound("lift_up", LIFT_UP);
+			addSound("lift_down", LIFT_DOWN);
 		}
 		
 		private static function addSound(id:String, link:Class):void
@@ -43,7 +49,7 @@ package
 		{
 			var sound:Sfx = getSound(id);
 			if (sound) 
-				sound.loop();
+				sound.loop(vol, pan);
 		}
 		
 		public static function setVolume(id:String, value:Number):void
