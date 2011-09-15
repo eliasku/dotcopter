@@ -27,10 +27,12 @@ package
 		public var hud:HUD;
 		public var curtains:Curtains;
 		
-		private var _starLayer1:Starfield;
-		private var _starLayer2:Starfield;
+		private var _dt:int = 0;
+		private var _accelTime:Number;
 		
-		private var _t:int = 0;
+		private var _accelDist:int = 100;
+		private var _accelAmount:Number = 0.5;
+	
 		
 		public function CoptGame() 
 		{
@@ -42,12 +44,14 @@ package
 			terrain = new Landscape(); add(terrain); 
 			
 			copter = new Heli(); add(copter); 
-			explode = new Explode(); addGraphic(explode);
+			explode = new Explode(); addGraphic(explode, ZSort.BOOM);
 			
 			curtains = new Curtains(); add(curtains);
 			hud = new HUD(); add(hud);
 			
 			new Background();
+			
+			_accelTime = _accelDist / terrain.vx;
 		}
 		
 		override public function update():void 
@@ -59,14 +63,25 @@ package
 					CoptGame.pauseMode = false;
 				}
 				return;
-			} else {
+			} 
+			else
+			{
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
 				if (started)
 				{
-					_t++;
-					if (_t % 2 == 0) HUD.score++;
-					//if (_t % 30 == 0) create(Block);
-					if (_t % 60 == 0) create(Turret);
+					_dt++;
+					if (_dt % 2 == 0) HUD.score++;
+					//if (_dt % 30 == 0) create(Block);
+					if (_dt % 60 == 0) create(Turret);
+					
+					if (_dt >= _accelDist)
+					{
+						_dt = 0;
+						terrain.vx += _accelAmount;
+						_accelDist = terrain.vx * _accelTime;
+						
+						SoundManager.play("speed_up");
+					}
 				} 
 				else if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
@@ -92,6 +107,10 @@ package
 			
 			resetBlocks();
 			resetTurrets();
+			
+			_dt = 0;
+			_accelDist = 100;
+			_accelTime = _accelDist / terrain.vx;
 			
 			// save score
 /*			if (HUD.score > HUD.best) {
