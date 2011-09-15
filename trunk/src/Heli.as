@@ -78,6 +78,9 @@ package
 			lifes = maxLifes;
 			
 			layer = 2;
+			
+			SoundManager.loop("lift_up", 0.0);
+			SoundManager.loop("lift_down", 0.0);
 		}
 		
 		override public function update():void
@@ -87,10 +90,13 @@ package
 			if (CoptGame.started) {
 				if (Input.mousePressed || Input.pressed(Key.SPACE)) {
 					boost = true;
-					//SoundManager.play("lift");
+					SoundManager.setVolume("lift_up", 0.1);
+					SoundManager.setVolume("lift_down", 0.0);
 				}
 				if (Input.mouseReleased || Input.released(Key.SPACE)) {
 					boost = false;
+					SoundManager.setVolume("lift_up", 0.0);
+					SoundManager.setVolume("lift_down", 0.1);
 				}
 				
 				/*if (boost) {
@@ -206,6 +212,11 @@ package
 			CoptGame.started = false;
 			CoptGame.clickable = false;
 			
+			SoundManager.setVolume("lift_up", 0.0);
+			SoundManager.setVolume("lift_down", 0.0);
+			
+			SoundManager.play("boom");
+			
 			godMode(-1);
 			
 			fraged = true;
@@ -217,6 +228,9 @@ package
 			_copterSpriteMap.angle = 0;
 			visible = true;
 			_t = 0;
+			
+			SoundManager.setVolume("lift_up", 0.0);
+			SoundManager.setVolume("lift_down", 0.0);
 			
 			var down:int = _game.terrain.getPlaceOffset(x + 6);
 			y = down - _game.terrain.spaceGap * 0.5;
