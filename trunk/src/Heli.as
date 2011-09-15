@@ -56,6 +56,8 @@ package
 		
 		private var _upLim:int = 0;
 		private var _downLim:int = Landscape.PIECE_HEIGHT;
+		private var _screen:LCDScreen;
+		private var _grainStep:Number;
 		
 		public function Heli() 
 		{
@@ -81,6 +83,8 @@ package
 			
 			SoundManager.loop("lift_up", 0.0);
 			SoundManager.loop("lift_down", 0.0);
+			
+			_screen = LCDScreen.instance;
 		}
 		
 		override public function update():void
@@ -288,6 +292,7 @@ package
 				else
 				{
 					visible = (_t % 4 == 0) ? true : false;
+					_screen.grainDepth -= _grainStep;
 				}
 			}
 		}
@@ -297,7 +302,13 @@ package
 			_godTime = duration;
 			if (_godTime < 0)
 			{
+				_screen.grainDepth = LCDScreen.NORMAL_GRAIN;
 				visible = true;
+			}
+			else
+			{
+				_screen.grainDepth = LCDScreen.HITTED_GRAIN;
+				_grainStep = LCDScreen.DELTA_GRAIN / _godTime;
 			}
 		}
 		
