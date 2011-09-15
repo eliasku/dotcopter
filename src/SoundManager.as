@@ -12,6 +12,8 @@ package
 		[Embed(source = '../assets/sound/lift_up.mp3')] private static const LIFT_UP:Class;
 		[Embed(source = '../assets/sound/lift_down.mp3')] private static const LIFT_DOWN:Class;
 		
+		[Embed(source='../assets/sound/speed_up.mp3')] private static const SPEED_UP:Class;
+		
 		private static var _sounds:Object;
 		
 		public static function initialize():void
@@ -22,6 +24,7 @@ package
 			addSound("kick", KICK);
 			addSound("lift_up", LIFT_UP);
 			addSound("lift_down", LIFT_DOWN);
+			addSound("speed_up", SPEED_UP);
 		}
 		
 		private static function addSound(id:String, link:Class):void

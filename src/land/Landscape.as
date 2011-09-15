@@ -24,6 +24,8 @@ package land
 		public static const PIECE_DOUBLE_WIDTH:int = FP.width * 8;
 		public static const PIECE_HEIGHT:int = FP.height * 2;
 		
+		public static const INIT_SPEED:Number = 3;
+		
 		private var _frame:BitmapData;
 		private var _frameRect:Rectangle;
 		private var _dest:Point = new Point(0, 0);
@@ -39,7 +41,7 @@ package land
 		private var _pencil:Pencil;
 		private var _hole:Shape = new Shape();
 		
-		public var vx:Number = 3;
+		public var vx:Number = INIT_SPEED;
 		public var spaceGap:int;
 				
 		public function Landscape()
@@ -73,6 +75,8 @@ package land
 		
 		public function reset():void
 		{
+			vx = INIT_SPEED;
+			
 			_pencil.drawIn(_pieces[_cur], _pieceRect);
 			nextPiece();
 			
