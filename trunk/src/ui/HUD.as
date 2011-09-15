@@ -38,7 +38,7 @@ package ui
 		{
 			_copter = CoptGame.instance.copter;
 			
-			var panel:BitmapData = new BitmapData(FP.width, 10, true, 0xFF000000);
+			var panel:BitmapData = new BitmapData(FP.width, 10, true, 0x00000000);
 			Draw.setTarget(panel);
 			Draw.line(0, 0, FP.width, 0, 0xFFFFFFFFFF);
 			Draw.line(0, 0, 0, 10, 0xFFFFFFFFFF);
@@ -66,8 +66,6 @@ package ui
 			_display = new Graphiclist(image, scoreText); // bestText
 			_display.scrollX = 0;
 			_display.scrollY = 0;
-			
-			visible = false;
 			
 			graphic = _display;
 			

@@ -1,6 +1,7 @@
 package  
 {
 	import land.Landscape;
+	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
@@ -26,13 +27,14 @@ package
 		public var explode:Explode;
 		public var hud:HUD;
 		public var curtains:Curtains;
+		public var trail:Trail;
 		
 		private var _dt:int = 0;
 		private var _accelTime:Number;
 		
 		private var _accelDist:int = 100;
 		private var _accelAmount:Number = 0.5;
-	
+		
 		
 		public function CoptGame() 
 		{
@@ -44,6 +46,7 @@ package
 			terrain = new Landscape(); add(terrain); 
 			
 			copter = new Heli(); add(copter); 
+			trail = new Trail(); addGraphic(trail, ZSort.COPTER);
 			explode = new Explode(); addGraphic(explode, ZSort.BOOM);
 			
 			curtains = new Curtains(); add(curtains);

@@ -129,6 +129,9 @@ package
 				
 				_t ++;
 				
+				if (lifes < maxLifes)
+					_game.trail.smoke(centre);
+				
 				updateGod();
 				
 				if (!isGod())
@@ -257,6 +260,8 @@ package
 			}
 			else
 			{
+				_game.trail.puffAmount = int(Trail.MAX_PUFF * (1 - lifes / maxLifes));
+				
 				trace("[copter]", "taking damage");
 				
 				SoundManager.play("kick");
