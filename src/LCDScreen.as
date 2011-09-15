@@ -15,6 +15,10 @@ package
 	public class LCDScreen extends Sprite
 	{
 		private static const BACKGROUND_COLOR:uint = 0xff000000;
+
+		public static const NORMAL_GRAIN:Number = 0.0175;
+		public static const HITTED_GRAIN:Number = 0.4;
+		public static const DELTA_GRAIN:Number = HITTED_GRAIN - NORMAL_GRAIN;
 		
 		private static const CELL_WIDTH:int = 2;
 		private static const CELL_HEIGHT:int = 2;
@@ -45,10 +49,13 @@ package
 		private var _gridAlpha:Number = 0.5;
 		private var _legoMode:Boolean;
 		
-		
+		private static var _instance:LCDScreen;
 		
 		public function LCDScreen(columns:int = 96, rows:int = 96)
 		{
+			if (_instance) return;
+			_instance = this;
+			
 			initialize(columns, rows);
 		}
 
@@ -276,6 +283,11 @@ package
 			
 			_gridAlpha = value;
 			_gridBitmap.alpha = value;
+		}
+		
+		static public function get instance():LCDScreen
+		{
+			return _instance;
 		}
 	}
 }
