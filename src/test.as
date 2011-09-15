@@ -13,7 +13,7 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	[SWF(backgroundColor="#000000", width="720", height="405", frameRate="30")]
+	[SWF(backgroundColor="#000000", width="480", height="270", frameRate="30")]
 	public class test extends Sprite 
 	{
 		public static const COLS:int = 160;
