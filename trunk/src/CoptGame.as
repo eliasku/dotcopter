@@ -34,6 +34,7 @@ package
 		
 		private var _accelDist:int = 100;
 		private var _accelAmount:Number = 0.5;
+		private var _t:int = 0;
 		
 		
 		public function CoptGame() 
@@ -55,6 +56,7 @@ package
 			new Background();
 			
 			_accelTime = _accelDist / terrain.vx;
+			BonusLayout.replace();
 		}
 		
 		override public function update():void 
@@ -72,11 +74,16 @@ package
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
 				if (started)
 				{
-					_dt++;
-					if (_dt % 2 == 0) HUD.score++;
-					//if (_dt % 30 == 0) create(Block);
-					if (_dt % 60 == 0) create(Turret);
+					_t++;
+					if (_t % 2 == 0) HUD.score++;
 					
+					if (_t % 5 == 0) create(Coin);
+					if (_t % 60 == 0) BonusLayout.replace();
+					
+					//if (_t % 30 == 0) create(Block);
+					if (_t % 60 == 0) create(Turret);
+					
+					_dt++;
 					if (_dt >= _accelDist)
 					{
 						_dt = 0;
@@ -111,6 +118,9 @@ package
 			resetBlocks();
 			resetTurrets();
 			
+			resetCoins();
+			
+			_t = 0;
 			_dt = 0;
 			_accelDist = 100;
 			_accelTime = _accelDist / terrain.vx;
@@ -123,6 +133,8 @@ package
 				Data.save("score");
 			}*/
 			HUD.score = 0;
+			
+			BonusLayout.replace();
 		}
 		
 		private function resetBlocks():void 
@@ -142,6 +154,16 @@ package
 			for each (var turret:Turret in turrets) 
 			{
 				turret.destroy();
+			}
+		}
+		
+		private function resetCoins():void 
+		{
+			var coins:Vector.<Coin> = new Vector.<Coin>();
+			getClass(Coin, coins);
+			for each (var coin:Coin in coins) 
+			{
+				coin.destroy();
 			}
 		}
 		
