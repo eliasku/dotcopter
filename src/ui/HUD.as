@@ -39,10 +39,10 @@ package ui
 			_copter = CoptGame.instance.copter;
 			
 			var panel:BitmapData = new BitmapData(FP.width, 10, true, 0x00000000);
-			Draw.setTarget(panel);
+/*			Draw.setTarget(panel);
 			Draw.line(0, 0, FP.width, 0, 0xFFFFFFFFFF);
 			Draw.line(0, 0, 0, 10, 0xFFFFFFFFFF);
-			Draw.line(FP.width-1, 0, FP.width-1, 10, 0xFFFFFFFFFF);
+			Draw.line(FP.width-1, 0, FP.width-1, 10, 0xFFFFFFFFFF);*/
 			
 			super(0, FP.height - 10);
 			var image:Image = new Image(panel);

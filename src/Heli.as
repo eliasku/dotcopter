@@ -1,4 +1,4 @@
-package  
+package
 {
 	import flash.geom.Point;
 	import flash.media.Sound;
@@ -24,8 +24,10 @@ package
 		public const SPRITE_WIDTH:Number = 12;
 		public const SPRITE_HEIGHT:Number = 10;
 		
-		[Embed(source = '../assets/heli.png')] private const HELI:Class;
-		[Embed(source = '../assets/heli_mask.png')] private const COPTER_MASK:Class;
+		[Embed(source='../assets/heli.png')]
+		private const HELI:Class;
+		[Embed(source='../assets/heli_mask.png')]
+		private const COPTER_MASK:Class;
 		
 		private var _copterSpriteMap:Spritemap;
 		
@@ -48,7 +50,7 @@ package
 		private var fragAmt:int = 10;
 		private var fragLim:int = 3;
 		
-		private var _t:int = 0;		
+		private var _t:int = 0;
 		private var _godTime:int = -1;
 		
 		private var _game:CoptGame;
@@ -59,7 +61,7 @@ package
 		private var _screen:LCDScreen;
 		private var _grainStep:Number;
 		
-		public function Heli() 
+		public function Heli()
 		{
 			_game = CoptGame.instance;
 			
@@ -67,7 +69,7 @@ package
 			var down:int = _game.terrain.getPlaceOffset(x + 5);
 			y = down - _game.terrain.spaceGap * 0.5;
 			
-			_copterSpriteMap = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT); 
+			_copterSpriteMap = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT);
 			_copterSpriteMap.add("fly", [0, 1, 2, 3, 4], 2, true);
 			graphic = _copterSpriteMap;
 			
@@ -89,31 +91,35 @@ package
 		
 		override public function update():void
 		{
-			if (CoptGame.pauseMode) return;
+			if (CoptGame.pauseMode)
+				return;
 			
-			if (CoptGame.started) {
-				if (Input.mousePressed || Input.pressed(Key.SPACE)) {
+			if (CoptGame.started)
+			{
+				if (Input.mousePressed || Input.pressed(Key.SPACE))
+				{
 					boost = true;
 					SoundManager.setVolume("lift_up", 0.1);
 					SoundManager.setVolume("lift_down", 0.0);
 				}
-				if (Input.mouseReleased || Input.released(Key.SPACE)) {
+				if (Input.mouseReleased || Input.released(Key.SPACE))
+				{
 					boost = false;
 					SoundManager.setVolume("lift_up", 0.0);
 					SoundManager.setVolume("lift_down", 0.1);
 				}
 				
 				/*if (boost) {
-					if (up.volume < 1) 
-						up.volume += amt;
-					else 
-						up.volume = 1;
-				} else {
-					if (up.volume > 0)
-						up.volume -= amt;
-					else 
-						up.volume = 0;
-				}*/
+				   if (up.volume < 1)
+				   up.volume += amt;
+				   else
+				   up.volume = 1;
+				   } else {
+				   if (up.volume > 0)
+				   up.volume -= amt;
+				   else
+				   up.volume = 0;
+				 }*/
 				
 				vy += (boost) ? ay : gravity;
 				
@@ -121,13 +127,13 @@ package
 					vy = maxspeed + 0.5;
 				else if (vy < -maxspeed)
 					vy = -maxspeed;
-					
+				
 				_copterSpriteMap.angle = -vy * 4;
 				// update pixelmask
 				coptMask.angle = _copterSpriteMap.angle;
 				mask = new Pixelmask(coptMask.source);
 				
-				_t ++;
+				_t++;
 				
 				if (lifes < maxLifes)
 					_game.trail.smoke(centre);
@@ -145,19 +151,25 @@ package
 					if (bullet)
 					{
 						bullet.destroy();
-						
 						damage();
 					}
-						
-					var block:Block = collide("block", x, y) as Block;
-					if (block)
-					{
-						_game.terrain.stamp(block.clone(), block.pos);
-						
-						block.destroy();
-						
-						damage();
-					}
+					
+/*					var block:Block = collide("block", x, y) as Block;
+					   if (block)
+					   {
+					   _game.terrain.stamp(block.clone(), block.pos);
+					
+					   block.destroy();
+					
+					   damage();
+					 }*/
+				}
+				
+				var coin:Coin = collide("coin", x, y) as Coin;
+				if (coin)
+				{
+					SoundManager.play("coin_collect");
+					coin.destroy();
 				}
 				
 				y += vy;
@@ -179,9 +191,11 @@ package
 					y = _downLim - 10;
 			}
 			
-			if (fraged) {
+			if (fraged)
+			{
 				fragTime++;
-				if (fragTime == fragAmt) {
+				if (fragTime == fragAmt)
+				{
 					fragTime = 0;
 					fraged = false;
 					this.visible = false;
@@ -192,7 +206,7 @@ package
 			super.update();
 		}
 		
-		private function dodge():void 
+		private function dodge():void
 		{
 			var down:int = _game.terrain.getPlaceOffset(x + 6);
 			var up:int = down - _game.terrain.spaceGap;
@@ -201,12 +215,14 @@ package
 			if (y + 5 > middle)
 			{
 				// вниз
-				if (vy > 0) vy *= -1;
+				if (vy > 0)
+					vy *= -1;
 			}
 			else
 			{
 				// вверх
-				if (vy < 0) vy *= -1;
+				if (vy < 0)
+					vy *= -1;
 			}
 			
 			trace("[copter]", "dodging");
@@ -215,7 +231,7 @@ package
 		}
 		
 		public function destroy():void
-		{	
+		{
 			CoptGame.started = false;
 			CoptGame.clickable = false;
 			
@@ -231,7 +247,8 @@ package
 		
 		public function reset():void
 		{
-			if (fragAmt > fragLim) fragAmt--;
+			if (fragAmt > fragLim)
+				fragAmt--;
 			_copterSpriteMap.angle = 0;
 			visible = true;
 			_t = 0;
@@ -285,9 +302,9 @@ package
 		{
 			if (isGod())
 			{
-				if(_godTime > 0)
+				if (_godTime > 0)
 				{
-					_godTime --;
+					_godTime--;
 					if (_godTime == 0)
 						_godTime = -1;
 				}
@@ -323,7 +340,7 @@ package
 		}
 		
 		public function get centre():Point
-		{ 
+		{
 			_centre.x = x + 6;
 			_centre.y = y + 5;
 			return _centre;
