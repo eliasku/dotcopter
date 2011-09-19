@@ -21,21 +21,21 @@ package
 			_game = CoptGame.instance;
 			
 			var bg:BitmapData = FP.getBitmap(BASE);
-			var back:Back = new Back(bg, 0.33);
+			var back:Back = new Back(bg, 0.2, 0.0);
 			_game.addGraphic(back, ZSort.BG);
 
 			bg = generateStars(26);
-			back = new Back(bg, 0.33, 0.75);
+			back = new Back(bg, 0.2, 0.0);
 			back.alpha = 0.3;
 			_game.addGraphic(back, ZSort.BG);
 			
 			bg = generateStars(13);
-			back = new Back(bg, 0.66, 0.5);
+			back = new Back(bg, 0.4, 0.0);
 			back.alpha = 0.6;
 			_game.addGraphic(back, ZSort.BG);
 			
 			bg = mirror(FP.getBitmap(BG));
-			back = new Back(bg, 0.66);
+			back = new Back(bg, 1.0, 1.0);
 			_game.addGraphic(back, ZSort.BG);
 		}
 		
