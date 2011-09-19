@@ -11,8 +11,6 @@
 			FP.screen.color = 0xFF333333;
 			FP.screen.scale = 4;
 			
-			SoundManager.initialize();
-			
 			FP.world = new CoptGame();
 		}
 	}

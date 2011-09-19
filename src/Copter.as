@@ -1,5 +1,6 @@
 package  
 {
+	import com.ek.audio.AudioLazy;
 	import flash.geom.Point;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
@@ -222,7 +223,7 @@ package
 			}
 			else
 			{
-				SoundManager.play("kick");
+				AudioLazy.play("sfx_kick");
 				
 				_game.explode.detonate("small", centre, 25);
 				_game.terrain.makeHole(centre);

@@ -1,7 +1,9 @@
 package  
 {
+	import com.ek.audio.AudioLazy;
+	import com.ek.audio.AudioManager;
+	import flash.media.SoundChannel;
 	import land.Landscape;
-	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
@@ -34,8 +36,8 @@ package
 		
 		private var _accelDist:int = 100;
 		private var _accelAmount:Number = 0.5;
-		private var _t:int = 0;
 		
+		private var _chTune:SoundChannel;
 		
 		public function CoptGame() 
 		{
@@ -61,6 +63,11 @@ package
 		
 		override public function update():void 
 		{	
+			if (Input.pressed(Key.M))
+			{
+				AudioManager.muted = !AudioManager.muted;
+			}
+			
 			if (CoptGame.pauseMode)
 			{
 				if (Input.mousePressed || Input.pressed(Key.SPACE))
@@ -74,28 +81,31 @@ package
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
 				if (started)
 				{
-					_t++;
-					if (_t % 2 == 0) HUD.score++;
-					
-					if (_t % 5 == 0) create(Coin);
-					if (_t % 60 == 0) BonusLayout.replace();
-					
-					//if (_t % 30 == 0) create(Block);
-					if (_t % 60 == 0) create(Turret);
-					
 					_dt++;
+					
+					if (_dt % 2 == 0) HUD.score++;
+					
+					if (_dt % 5 == 0) create(Coin);
+					if (_dt % 60 == 0) BonusLayout.replace();
+					
+					//if (_dt % 30 == 0) create(Block);
+					if (_dt % 60 == 0) create(Turret);
+					
+					
 					if (_dt >= _accelDist)
 					{
 						_dt = 0;
 						terrain.vx += _accelAmount;
 						_accelDist = terrain.vx * _accelTime;
 						
-						SoundManager.play("speed_up");
+						AudioLazy.play("sfx_speed_up");
 					}
 				} 
 				else if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
 					started = true;
+					
+					_chTune = AudioLazy.loop("sfx_tune", 0.5);
 				}
 				
 				shaker.update();
@@ -112,6 +122,8 @@ package
 		{
 			CoptGame.clickable = true;
 			
+			_chTune.stop();
+			
 			terrain.reset();
 			copter.reset();
 			
@@ -120,7 +132,6 @@ package
 			
 			resetCoins();
 			
-			_t = 0;
 			_dt = 0;
 			_accelDist = 100;
 			_accelTime = _accelDist / terrain.vx;

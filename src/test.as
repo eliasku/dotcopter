@@ -1,5 +1,7 @@
 package  
 {
+	import com.ek.asset.AssetLoader;
+	import com.ek.asset.AssetManager;
 	import net.flashpunk.FP;
 
 	import com.flashdynamix.utils.SWFProfiler;
@@ -25,23 +27,63 @@ package
 		private var _screen:LCDScreen;
 		private var _sceenRect:Rectangle = new Rectangle(0, 0, COLS, ROWS);
 		private var _debug:BitmapData;
-
+		
+		private var _descriptionLoader:AssetLoader;
+		private var _assetLoader:AssetLoader;
+		
 		public function test() 
+		{
+			SWFProfiler.init(stage, this);
+			
+			AssetManager.initialize();
+			AssetManager.assetURL = "asset/";
+			AssetManager.add("assets", "asset.xml");
+			
+			initialize();
+			
+			_descriptionLoader = AssetManager.load();
+			_descriptionLoader.addEventListener(Event.COMPLETE, onDescLoaded);
+			_descriptionLoader.load();
+		}
+		
+		private function initialize():void 
 		{
 			_screen = new LCDScreen(COLS, ROWS);
 			_screen.x = _screen.y;
-			//_screen.legoMode = true;
 			stage.addChild(_screen);
 			
 			_main = new Main();
 			_main.visible = false;
 			addChild(_main);
 			
-			SWFProfiler.init(stage, this);
-			
 			stage.fullScreenSourceRect = new Rectangle(0, 0, _screen.screenWidth, _screen.screenHeight);
+		}
+		
+		private function onDescLoaded(e:Event):void 
+		{
+			_descriptionLoader.removeEventListener(Event.COMPLETE, onDescLoaded);
+			_descriptionLoader = null;
 			
-			trace(COLS, ROWS, _screen.screenWidth, _screen.screenHeight)
+			AssetManager.addFromXML(AssetManager.getXML("assets"));
+			AssetManager.remove("assets");
+			
+			_assetLoader = AssetManager.load();
+			if (_assetLoader)
+			{
+				_assetLoader.addEventListener(Event.COMPLETE, onAssetLoaded);
+				_assetLoader.load();
+			}
+			else
+				onAssetLoaded(null);
+		}
+		
+		private function onAssetLoaded(e:Event):void 
+		{
+			if (_assetLoader)
+			{
+				_assetLoader.removeEventListener(Event.COMPLETE, onAssetLoaded);
+				_assetLoader = null;
+			}
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}

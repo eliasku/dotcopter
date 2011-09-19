@@ -1,17 +1,16 @@
 package
 {
+	import com.ek.audio.AudioLazy;
+	import com.ek.audio.AudioManager;
 	import flash.geom.Point;
-	import flash.media.Sound;
 	import flash.media.SoundChannel;
-	import flash.net.URLRequest;
+	import flash.media.SoundTransform;
 	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
-	import net.flashpunk.graphics.Graphiclist;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.masks.Pixelmask;
-	import net.flashpunk.Sfx;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	
@@ -61,13 +60,15 @@ package
 		private var _screen:LCDScreen;
 		private var _grainStep:Number;
 		
+		private var _chLiftUp:SoundChannel;
+		private var _chLiftDown:SoundChannel;
+		
 		public function Heli()
 		{
 			_game = CoptGame.instance;
+			_screen = LCDScreen.instance;
 			
 			x = FP.width * 0.3;
-			var down:int = _game.terrain.getPlaceOffset(x + 5);
-			y = down - _game.terrain.spaceGap * 0.5;
 			
 			_copterSpriteMap = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT);
 			_copterSpriteMap.add("fly", [0, 1, 2, 3, 4], 2, true);
@@ -79,47 +80,36 @@ package
 			mask = new Pixelmask(coptMask.source);
 			type = "copter";
 			
-			lifes = maxLifes;
+			layer = ZSort.COPTER;
 			
-			layer = 2;
-			
-			SoundManager.loop("lift_up", 0.0);
-			SoundManager.loop("lift_down", 0.0);
-			
-			_screen = LCDScreen.instance;
+			reset();
 		}
 		
 		override public function update():void
 		{
 			if (CoptGame.pauseMode)
 				return;
-			
+
 			if (CoptGame.started)
 			{
 				if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
 					boost = true;
-					SoundManager.setVolume("lift_up", 0.1);
-					SoundManager.setVolume("lift_down", 0.0);
+					
+					if (!_chLiftUp) _chLiftUp = AudioLazy.loop("sfx_lift_up");
+					
+					AudioLazy.setVolume(_chLiftUp, 0.2);
+					AudioLazy.setVolume(_chLiftDown, 0.0);
 				}
 				if (Input.mouseReleased || Input.released(Key.SPACE))
 				{
 					boost = false;
-					SoundManager.setVolume("lift_up", 0.0);
-					SoundManager.setVolume("lift_down", 0.1);
+					
+					if (!_chLiftDown) _chLiftDown = AudioLazy.loop("sfx_lift_down");
+					
+					AudioLazy.setVolume(_chLiftUp, 0.0);
+					AudioLazy.setVolume(_chLiftDown, 0.2);
 				}
-				
-				/*if (boost) {
-				   if (up.volume < 1)
-				   up.volume += amt;
-				   else
-				   up.volume = 1;
-				   } else {
-				   if (up.volume > 0)
-				   up.volume -= amt;
-				   else
-				   up.volume = 0;
-				 }*/
 				
 				vy += (boost) ? ay : gravity;
 				
@@ -155,20 +145,20 @@ package
 					}
 					
 /*					var block:Block = collide("block", x, y) as Block;
-					   if (block)
+					if (block)
 					   {
 					   _game.terrain.stamp(block.clone(), block.pos);
 					
 					   block.destroy();
 					
 					   damage();
-					 }*/
+					}*/
 				}
 				
 				var coin:Coin = collide("coin", x, y) as Coin;
 				if (coin)
 				{
-					SoundManager.play("coin_collect");
+					AudioLazy.play("sfx_coin_collect");
 					coin.destroy();
 				}
 				
@@ -235,10 +225,10 @@ package
 			CoptGame.started = false;
 			CoptGame.clickable = false;
 			
-			SoundManager.setVolume("lift_up", 0.0);
-			SoundManager.setVolume("lift_down", 0.0);
+			AudioLazy.setVolume(_chLiftUp, 0.0);
+			AudioLazy.setVolume(_chLiftDown, 0.0);
 			
-			SoundManager.play("boom");
+			AudioLazy.play("sfx_explosion");
 			
 			godMode(-1);
 			
@@ -249,20 +239,28 @@ package
 		{
 			if (fragAmt > fragLim)
 				fragAmt--;
-			_copterSpriteMap.angle = 0;
-			visible = true;
+				
 			_t = 0;
+			visible = true;	
 			
-			SoundManager.setVolume("lift_up", 0.0);
-			SoundManager.setVolume("lift_down", 0.0);
+			_copterSpriteMap.angle = 0;
+			
+			// вот тут в первый раз по нулям
+			if (!_chLiftUp)
+				_chLiftUp = AudioLazy.loop("sfx_lift_up");
+			if (!_chLiftDown)
+				_chLiftDown = AudioLazy.loop("sfx_lift_down");
+			
+			AudioLazy.setVolume(_chLiftUp, 0.0);
+			AudioLazy.setVolume(_chLiftDown, 0.0);
 			
 			var down:int = _game.terrain.getPlaceOffset(x + 6);
 			y = down - _game.terrain.spaceGap * 0.5;
 			vy = 0;
 			
-			godMode(-1);
+			if (isGod()) godMode(-1);
 			
-			_game.hud.resetHearts();
+			if (_game.hud) _game.hud.resetHearts();
 			lifes = maxLifes;
 		}
 		
@@ -279,9 +277,9 @@ package
 			{
 				_game.trail.puffAmount = int(Trail.MAX_PUFF * (1 - lifes / maxLifes));
 				
-				trace("[copter]", "taking damage");
+				//trace("[copter]", "taking damage");
 				
-				SoundManager.play("kick");
+				AudioLazy.play("sfx_kick");
 				
 				_game.explode.detonate("small", centre, 25);
 				_game.terrain.makeHole(centre, 10);
