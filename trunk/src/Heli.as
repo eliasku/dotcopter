@@ -319,7 +319,7 @@ package
 			}
 		}
 		
-		private function godMode(duration:int = 60):void
+		private function godMode(duration:int = 10):void
 		{
 			_godTime = duration;
 			if (_godTime < 0)
