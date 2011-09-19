@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<asset>
+	<!-- Звуки/музыка -->
+	<item id="sfx_tune" url="sfx/tune.mp3" />
+	<item id="sfx_bullet_hit" url="sfx/bullet_hit.mp3" />
+	<item id="sfx_coin_collect" url="sfx/coin_collect.mp3" />
+	<item id="sfx_explosion" url="sfx/explosion.mp3" />
+	<item id="sfx_kick" url="sfx/kick.mp3" />
+	<item id="sfx_lift_down" url="sfx/lift_down.mp3" />
+	<item id="sfx_lift_up" url="sfx/lift_up.mp3" />
+	<item id="sfx_speed_up" url="sfx/speed_up.mp3" />
+	<item id="sfx_turret_shoot" url="sfx/turret_shoot.mp3" />
+</asset>

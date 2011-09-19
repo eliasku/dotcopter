@@ -63,7 +63,7 @@ package
 		
 		public function destroy():void
 		{
-			world.recycle(this);
+			if (world) world.recycle(this);
 			reset();
 		}
 		

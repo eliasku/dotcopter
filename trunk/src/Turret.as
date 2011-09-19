@@ -1,5 +1,6 @@
 package  
 {
+	import com.ek.audio.AudioLazy;
 	import flash.geom.Point;
 	import land.Landscape;
 	import net.flashpunk.Entity;
@@ -102,6 +103,8 @@ package
 		{
 			if (y + _tower.height * 0.5 < _copter.centre.y) return;
 			if (x + _tower.width * 0.5 < _copter.centre.x) return;
+			
+			AudioLazy.play("sfx_turret_shoot");
 			
 			launchDirection = Math.atan2(_copter.centre.y - (y + _tower.height * 0.5), _copter.centre.x - (x + _tower.width * 0.5));
 			var bulletEntry:Point = Point.polar(GUN_LENGTH, launchDirection);

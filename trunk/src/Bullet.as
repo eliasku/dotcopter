@@ -1,5 +1,6 @@
 package  
 {
+	import com.ek.audio.AudioLazy;
 	import draw.Pencil;
 	import flash.geom.Point;
 	import land.Landscape;
@@ -75,6 +76,8 @@ package
 					
 				if (collide("land", x, y))
 				{
+					AudioLazy.play("sfx_bullet_hit");
+					
 					_terrain.makeHole(getPos(), 5);
 					_explode.detonate(Explode.SMALL, getPos(), 20);
 					destroy();
