@@ -2,6 +2,7 @@ package
 {
 	import com.ek.asset.AssetLoader;
 	import com.ek.asset.AssetManager;
+	import com.ek.audio.Music;
 	import net.flashpunk.FP;
 
 	import com.flashdynamix.utils.SWFProfiler;
@@ -52,10 +53,6 @@ package
 			_screen.x = _screen.y;
 			stage.addChild(_screen);
 			
-			_main = new Main();
-			_main.visible = false;
-			addChild(_main);
-			
 			stage.fullScreenSourceRect = new Rectangle(0, 0, _screen.screenWidth, _screen.screenHeight);
 		}
 		
@@ -85,12 +82,17 @@ package
 				_assetLoader = null;
 			}
 			
+			_main = new Main();
+			_main.visible = false;
+			addChild(_main);
+			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private function onEnterFrame(e:Event):void 
 		{
 			_screen.draw(FP.buffer, _sceenRect);
+			Music.update(0);
 		}
 	}
 }
