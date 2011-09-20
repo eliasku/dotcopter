@@ -1,4 +1,4 @@
-package  
+package bonus 
 {
 	import flash.geom.Point;
 	import land.Landscape;
@@ -13,37 +13,39 @@ package
 	 */
 	public class Coin extends Entity 
 	{
-		private const WIDTH:int = 11;
-		private const HEIGHT:int = 11;
+		[Embed(source = '../../static/coin.png')] private const COIN:Class;
 		
-		[Embed(source = '../assets/coin.png')] private const COIN:Class;
+		private const STEP:Number = 0.15;
+		private const AMPLITUDE:Number = 4;
 		
-		private var _coin:Spritemap;
+		private var _halfWidth:int;
+		private var _doubleHeight:int;
+		
+		private var _coin:Image;
+		
 		private var _offset:int;
+		private var _place:Number;
 		
 		private var _terrain:Landscape;
 		
-		private var _pos:Point = new Point();
-		private var _place:Number;
-
+		private var _t:Number;
+		private var _y0:Number;
+		
 		public function Coin() 
 		{
 			_terrain = CoptGame.instance.terrain;
 			
-			_coin = new Spritemap(COIN, WIDTH, HEIGHT);
-			_coin.add("spin", [0, 1, 2, 3, 4, 5], 5);
-			graphic = _coin;
-			
-			_coin.play("spin");
+			_coin = new Image(COIN);
+			_halfWidth = _coin.width * 0.5;
+			_doubleHeight = _coin.height * 2;
 			
 			reset();
+			graphic = _coin;
 			
 			setHitboxTo(_coin);
 			type = "coin";
 			
 			layer = ZSort.COPTER;
-			
-			_place = BonusLayout.place;
 		}
 		
 		override public function update():void 
@@ -51,7 +53,8 @@ package
 			if (CoptGame.started && !CoptGame.pauseMode)
 			{
 				x -= _terrain.vx;
-				y = _terrain.getPlaceOffset(x + _coin.width * 0.5) - _coin.height - _offset;
+				_y0 = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
+				y = _y0 + Math.sin(_t += STEP) * AMPLITUDE;
 				
 				if (x + _coin.width < 0)
 				{
@@ -63,7 +66,8 @@ package
 		
 		public function destroy():void
 		{
-			if (world) world.recycle(this);
+			if (world)
+				world.recycle(this);
 			reset();
 		}
 		
@@ -72,8 +76,11 @@ package
 			_place = BonusLayout.place;
 			
 			x = FP.width;
-			_offset = (_terrain.spaceGap - _coin.height * 2) * _place;
-			y = _terrain.getPlaceOffset(x + _coin.width * 0.5) - _coin.height - _offset;
+			_offset = (_terrain.spaceGap - _doubleHeight) * _place;
+			_y0 = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
+			
+			y = _y0;
+			_t = 0;
 		}
 	}
 

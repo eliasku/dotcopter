@@ -1,5 +1,6 @@
 package
 {
+	import bonus.Coin;
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.AudioManager;
 	import flash.geom.Point;

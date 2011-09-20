@@ -1,5 +1,7 @@
 package  
 {
+	import bonus.BonusLayout;
+	import bonus.Coin;
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.AudioManager;
 	import flash.media.SoundChannel;
