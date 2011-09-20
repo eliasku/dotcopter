@@ -45,6 +45,8 @@ package land
 		public var vx:Number = INIT_SPEED;
 		public var spaceGap:int;
 		
+		private var _prevShift:int;
+		private var _deltaShift:int = 0;
 		
 		public function Landscape()
 		{
@@ -60,12 +62,13 @@ package land
 			
 			_shiftRect = _frameRect.clone();
 			_tempShift = _shiftRect.x;
+			_prevShift = _shiftRect.x;
 			_threshold = PIECE_WIDTH + FP.width;
 			_mergeMatrix = new Matrix(1, 0, 0, 1, PIECE_WIDTH, 0);
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingSource(Plain);
+			_pencil.setDrawingSource(Rock);
 			
 			spaceGap = _pencil.drawingMargin;
 			
@@ -85,6 +88,7 @@ package land
 			
 			_shiftRect.x = 0;
 			_tempShift = _shiftRect.x;
+			_prevShift = int(_shiftRect.x);
 			updatePiece();
 		}
 		
@@ -104,6 +108,10 @@ package land
 					_cur = step(_cur, 1);
 					nextPiece();
 				}
+				
+				_deltaShift = _shiftRect.x - _prevShift;
+				_prevShift = _shiftRect.x;
+				
 				updatePiece();
 			}
 			super.update();
@@ -156,9 +164,7 @@ package land
 			var curPiece:BitmapData = _pieces[_cur];
 			
 			px += _shiftRect.x;
-			
 			var sy:int = _pieceRect.bottom - 1;
-			
 			var pixel:uint = curPiece.getPixel32(px, sy); 
 			
 			while (((pixel >> 24) & 0xFF) > 0 && sy > 0)
@@ -174,6 +180,13 @@ package land
 		{
 			pos.x += _shiftRect.x;
 			_pieces[_cur].copyPixels(source, source.rect, pos);
+		}
+		
+		public function get deltaShift():int 
+		{
+			if (_deltaShift < 0)
+				_deltaShift += PIECE_WIDTH;
+			return _deltaShift;
 		}
 		
 	}

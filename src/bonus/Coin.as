@@ -13,7 +13,7 @@ package bonus
 	 */
 	public class Coin extends Entity 
 	{
-		[Embed(source = '../../static/coin.png')] private const COIN:Class;
+		[Embed(source = '../../static/coin_img.png')] private const COIN_IMG:Class;
 		
 		private const STEP:Number = 0.15;
 		private const AMPLITUDE:Number = 4;
@@ -28,14 +28,13 @@ package bonus
 		private var _terrain:Landscape;
 		
 		private var _t:Number;
-		private var _tx:Number;
 		private var _ty:Number;
 		
 		public function Coin() 
 		{
 			_terrain = CoptGame.instance.terrain;
 			
-			_coin = new Image(COIN);
+			_coin = new Image(COIN_IMG);
 			_halfWidth = _coin.width * 0.5;
 			_doubleHeight = _coin.height * 2;
 			
@@ -52,11 +51,10 @@ package bonus
 		{
 			if (CoptGame.started && !CoptGame.pauseMode)
 			{
-				_tx -= _terrain.vx;
-				x = int(_tx);
+				x -= _terrain.deltaShift;
 				
-				_ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;// + Math.sin(_t += STEP) * AMPLITUDE;
-				y = int(_ty);
+				_ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
+				y = _ty + Math.sin(_t += STEP) * AMPLITUDE;
 				
 				if (x + _coin.width < 0)
 				{
@@ -70,12 +68,10 @@ package bonus
 		{
 			_t = 0;
 			
-			_tx = FP.width;
-			x = int(_tx);
+			x = FP.width;	
 			
 			_offset = (_terrain.spaceGap - _doubleHeight) * BonusLayout.place;
-			_ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
-			y = int(_ty);
+			y = _ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
 		}
 	}
 

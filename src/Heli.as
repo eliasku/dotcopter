@@ -3,6 +3,7 @@ package
 	import bonus.Coin;
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.AudioManager;
+	import com.ek.audio.Music;
 	import flash.geom.Point;
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
@@ -83,6 +84,9 @@ package
 			
 			layer = ZSort.COPTER;
 			
+			_chLiftUp = AudioLazy.loop("sfx_lift_up");
+			_chLiftDown = AudioLazy.loop("sfx_lift_down");
+			
 			reset();
 		}
 		
@@ -97,16 +101,12 @@ package
 				{
 					boost = true;
 					
-					if (!_chLiftUp) _chLiftUp = AudioLazy.loop("sfx_lift_up");
-					
 					AudioLazy.setVolume(_chLiftUp, 0.2);
 					AudioLazy.setVolume(_chLiftDown, 0.0);
 				}
 				if (Input.mouseReleased || Input.released(Key.SPACE))
 				{
 					boost = false;
-					
-					if (!_chLiftDown) _chLiftDown = AudioLazy.loop("sfx_lift_down");
 					
 					AudioLazy.setVolume(_chLiftUp, 0.0);
 					AudioLazy.setVolume(_chLiftDown, 0.2);
@@ -164,7 +164,6 @@ package
 				}
 				
 				y += vy;
-				y = int(y);
 				
 				if (isGod())
 				{
@@ -217,8 +216,6 @@ package
 					vy *= -1;
 			}
 			
-			trace("[copter]", "dodging");
-			
 			damage();
 		}
 		
@@ -226,6 +223,8 @@ package
 		{
 			CoptGame.started = false;
 			CoptGame.clickable = false;
+			
+			Music.getMusic("sfx_tune").stop();
 			
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);
@@ -246,12 +245,6 @@ package
 			visible = true;	
 			
 			_copterSpriteMap.angle = 0;
-			
-			// вот тут в первый раз по нулям
-			if (!_chLiftUp)
-				_chLiftUp = AudioLazy.loop("sfx_lift_up");
-			if (!_chLiftDown)
-				_chLiftDown = AudioLazy.loop("sfx_lift_down");
 			
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);

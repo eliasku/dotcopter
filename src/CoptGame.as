@@ -4,6 +4,7 @@ package
 	import bonus.Coin;
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.AudioManager;
+	import com.ek.audio.Music;
 	import flash.media.SoundChannel;
 	import land.Landscape;
 	import net.flashpunk.FP;
@@ -61,6 +62,9 @@ package
 			
 			_accelTime = _accelDist / terrain.vx;
 			BonusLayout.replace();
+			
+			if (!Music.hasMusic("sfx_tune"))
+				Music.add("sfx_tune");
 		}
 		
 		override public function update():void 
@@ -87,28 +91,25 @@ package
 					
 					if (_dt % 2 == 0) HUD.score++;
 					
-					if (_dt % 5 == 0)
-					{
-						add(new Coin());
-					}
+					if (_dt % 5 == 0) add(new Coin());
 					if (_dt % 60 == 0) BonusLayout.replace();
 					
 					//if (_dt % 30 == 0) create(Block);
 					if (_dt % 60 == 0) create(Turret);
 					
-/*					if (_dt >= _accelDist)
+					if (_dt >= _accelDist)
 					{
 						_dt = 0;
 						terrain.vx += _accelAmount;
 						_accelDist = terrain.vx * _accelTime;
 						
 						AudioLazy.play("sfx_speed_up");
-					}*/
+					}
 				} 
-				else if (Input.mousePressed || Input.pressed(Key.SPACE))
+				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && CoptGame.clickable)
 				{
 					started = true;
-					_chTune = AudioLazy.loop("sfx_tune", 0.5);
+					Music.getMusic("sfx_tune").play();
 				}
 				
 				shaker.update();
@@ -124,8 +125,6 @@ package
 		public function reset():void
 		{
 			CoptGame.clickable = true;
-			
-			_chTune.stop();
 			
 			terrain.reset();
 			copter.reset();

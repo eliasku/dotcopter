@@ -64,7 +64,8 @@ package
 		{
 			if (CoptGame.started && !CoptGame.pauseMode)
 			{
-				x -= _terrain.vx;
+				x -= _terrain.deltaShift;
+				
 				y = _terrain.getPlaceOffset(x + _tower.width * 0.5) - _tower.height * 0.5;
 				
 				if (x + _tower.width < 0)
