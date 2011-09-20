@@ -151,12 +151,13 @@ package land
 			px += _shiftRect.x;
 			var sy:int = _pieceRect.bottom - 1;
 			
-			while (curPiece.getPixel32(px, sy) != Pencil.BLACK && sy > 0)
+			var pixel:uint = curPiece.getPixel32(px, sy); 
+			
+			while (((pixel >> 24) & 0xFF) > 0 && sy > 0)
 			{
 				sy--;
+				pixel = curPiece.getPixel32(px, sy);
 			}
-			
-			// -1 to mark for delete
 			
 			return sy;
 		}

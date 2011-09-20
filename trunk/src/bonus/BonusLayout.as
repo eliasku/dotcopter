@@ -1,4 +1,4 @@
-package  
+package bonus
 {
 	import net.flashpunk.FP;
 	/**
@@ -7,9 +7,9 @@ package
 	 */
 	public class BonusLayout 
 	{
-		private static const TOP:Number = 0.9;
+		private static const TOP:Number = 0.8;
 		private static const MIDDLE:Number = 0.5;
-		private static const BOTTOM:Number = 0.1;
+		private static const BOTTOM:Number = 0.2;
 		
 		static private var _placing:Array = [TOP, MIDDLE, BOTTOM];
 		static private var _place:Number;
