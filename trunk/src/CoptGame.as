@@ -87,26 +87,27 @@ package
 					
 					if (_dt % 2 == 0) HUD.score++;
 					
-					if (_dt % 5 == 0) create(Coin);
+					if (_dt % 5 == 0)
+					{
+						add(new Coin());
+					}
 					if (_dt % 60 == 0) BonusLayout.replace();
 					
 					//if (_dt % 30 == 0) create(Block);
 					if (_dt % 60 == 0) create(Turret);
 					
-					
-					if (_dt >= _accelDist)
+/*					if (_dt >= _accelDist)
 					{
 						_dt = 0;
 						terrain.vx += _accelAmount;
 						_accelDist = terrain.vx * _accelTime;
 						
 						AudioLazy.play("sfx_speed_up");
-					}
+					}*/
 				} 
 				else if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
 					started = true;
-					
 					_chTune = AudioLazy.loop("sfx_tune", 0.5);
 				}
 				
@@ -176,7 +177,7 @@ package
 			getClass(Coin, coins);
 			for each (var coin:Coin in coins) 
 			{
-				coin.destroy();
+				remove(coin);
 			}
 		}
 		
