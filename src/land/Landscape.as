@@ -24,7 +24,7 @@ package land
 		public static const PIECE_DOUBLE_WIDTH:int = FP.width * 8;
 		public static const PIECE_HEIGHT:int = FP.height * 2;
 		
-		public static const INIT_SPEED:Number = 3;
+		public static const INIT_SPEED:Number = 3.5;
 		
 		private var _frame:BitmapData;
 		private var _frameRect:Rectangle;
@@ -34,16 +34,18 @@ package land
 		private var _pieces:Vector.<BitmapData>;
 		private var _pieceRect:Rectangle;
 		
+		private var _tempShift:Number;
 		private var _shiftRect:Rectangle;
 		private var _threshold:int;
 		private var _mergeMatrix:Matrix;
-
+		
 		private var _pencil:Pencil;
 		private var _hole:Shape = new Shape();
 		
 		public var vx:Number = INIT_SPEED;
 		public var spaceGap:int;
-				
+		
+		
 		public function Landscape()
 		{
 			_frame = new BitmapData(FP.width, PIECE_HEIGHT, true, Pencil.BLACK);
@@ -57,12 +59,13 @@ package land
 			_pieceRect = new Rectangle(0, 0, PIECE_WIDTH, PIECE_HEIGHT);
 			
 			_shiftRect = _frameRect.clone();
+			_tempShift = _shiftRect.x;
 			_threshold = PIECE_WIDTH + FP.width;
 			_mergeMatrix = new Matrix(1, 0, 0, 1, PIECE_WIDTH, 0);
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingSource(Rock);
+			_pencil.setDrawingSource(Plain);
 			
 			spaceGap = _pencil.drawingMargin;
 			
@@ -81,6 +84,7 @@ package land
 			nextPiece();
 			
 			_shiftRect.x = 0;
+			_tempShift = _shiftRect.x;
 			updatePiece();
 		}
 		
@@ -89,10 +93,13 @@ package land
 			if (CoptGame.pauseMode) return;
 			if (CoptGame.started)
 			{
-				_shiftRect.x += vx;
+				_tempShift += vx;
+				_shiftRect.x = int(_tempShift);
+				
 				if (_shiftRect.right > _threshold)
 				{
-					_shiftRect.x -= PIECE_WIDTH;
+					_tempShift -= PIECE_WIDTH;
+					_shiftRect.x = int(_tempShift);
 					
 					_cur = step(_cur, 1);
 					nextPiece();
@@ -149,6 +156,7 @@ package land
 			var curPiece:BitmapData = _pieces[_cur];
 			
 			px += _shiftRect.x;
+			
 			var sy:int = _pieceRect.bottom - 1;
 			
 			var pixel:uint = curPiece.getPixel32(px, sy); 

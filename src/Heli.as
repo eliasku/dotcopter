@@ -160,10 +160,11 @@ package
 				if (coin)
 				{
 					AudioLazy.play("sfx_coin_collect");
-					coin.destroy();
+					world.remove(coin);
 				}
 				
 				y += vy;
+				y = int(y);
 				
 				if (isGod())
 				{
