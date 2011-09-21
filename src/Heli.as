@@ -1,6 +1,7 @@
 package
 {
 	import bonus.Coin;
+	import com.ek.asset.AssetManager;
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.Music;
 	import flash.display.BitmapData;
@@ -23,7 +24,6 @@ package
 		public const SPRITE_WIDTH:Number = 12;
 		public const SPRITE_HEIGHT:Number = 10;
 		
-		[Embed(source='../assets/heli.png')] private const HELI:Class;
 		private var _copter:Spritemap;
 		private var _copterMask:Pixelmask;
 		private var _maskBitmapData:BitmapData;
@@ -65,7 +65,7 @@ package
 			
 			x = FP.width * 0.3;
 			
-			_copter = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT);
+			_copter = new Spritemap(AssetManager.getBitmapData("gfx_copter"), SPRITE_WIDTH, SPRITE_HEIGHT);
 			_copter.add("fly", [0, 1, 2, 3, 4], 2, true);
 			_copter.play("fly");
 			_copter.centerOrigin();

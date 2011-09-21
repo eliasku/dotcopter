@@ -1,5 +1,6 @@
 package  
 {
+	import com.ek.asset.AssetManager;
 	import draw.Pencil;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
@@ -11,16 +12,13 @@ package
 	 */
 	public class Background
 	{
-		[Embed(source = '../assets/bg.png')] private const BG:Class;
-		[Embed(source = '../assets/bg_base.png')] private const BASE:Class;
-		
 		private var _game:CoptGame;
 		
 		public function Background() 
 		{
 			_game = CoptGame.instance;
 			
-			var bg:BitmapData = FP.getBitmap(BASE);
+			var bg:BitmapData = AssetManager.getBitmapData("gfx_bg_forest0");
 			var back:Back = new Back(bg, 0.2, 0.0);
 			_game.addGraphic(back, ZSort.BG);
 
@@ -34,7 +32,7 @@ package
 			back.alpha = 0.6;
 			_game.addGraphic(back, ZSort.BG);
 			
-			bg = mirror(FP.getBitmap(BG));
+			bg = mirror(AssetManager.getBitmapData("gfx_bg_forest1"));
 			back = new Back(bg, 1.0, 1.0);
 			_game.addGraphic(back, ZSort.BG);
 		}

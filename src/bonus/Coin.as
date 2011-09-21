@@ -1,5 +1,6 @@
 package bonus 
 {
+	import com.ek.asset.AssetManager;
 	import flash.geom.Point;
 	import land.Landscape;
 	import net.flashpunk.Entity;
@@ -13,8 +14,6 @@ package bonus
 	 */
 	public class Coin extends Entity 
 	{
-		[Embed(source = '../../static/coin_img.png')] private const COIN_IMG:Class;
-		
 		private const STEP:Number = 0.15;
 		private const AMPLITUDE:Number = 4;
 		
@@ -34,7 +33,7 @@ package bonus
 		{
 			_terrain = CoptGame.instance.terrain;
 			
-			_coin = new Image(COIN_IMG);
+			_coin = new Image(AssetManager.getBitmapData("gfx_coin"));
 			_halfWidth = _coin.width * 0.5;
 			_doubleHeight = _coin.height * 2;
 			
