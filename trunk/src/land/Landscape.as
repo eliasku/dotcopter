@@ -165,8 +165,8 @@ package land
 			
 			px += _shiftRect.x;
 			var sy:int = _pieceRect.bottom - 1;
-			var pixel:uint = curPiece.getPixel32(px, sy); 
 			
+			var pixel:uint = curPiece.getPixel32(px, sy); 
 			while (((pixel >> 24) & 0xFF) > 0 && sy > 0)
 			{
 				sy--;

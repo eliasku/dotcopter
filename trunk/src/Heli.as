@@ -159,7 +159,7 @@ package
 				var coin:Coin = collide("coin", x, y) as Coin;
 				if (coin)
 				{
-					AudioLazy.play("sfx_coin_collect");
+					AudioLazy.playAt("sfx_coin_collect", coin.centerX, coin.centerY);
 					world.remove(coin);
 				}
 				
@@ -229,7 +229,7 @@ package
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);
 			
-			AudioLazy.play("sfx_explosion");
+			AudioLazy.playAt("sfx_explosion", centre.x, centre.y);
 			
 			godMode(-1);
 			
@@ -274,7 +274,7 @@ package
 				
 				//trace("[copter]", "taking damage");
 				
-				AudioLazy.play("sfx_kick");
+				AudioLazy.playAt("sfx_kick", centre.x, centre.y);
 				
 				_game.explode.detonate("small", centre, 25);
 				_game.terrain.makeHole(centre, 10);

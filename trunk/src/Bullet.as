@@ -29,7 +29,7 @@ package
 		private var _targetOriginX:Number;
 		private var _terrain:Landscape;
 		
-		private var _pos:Point = new Point();
+		private var _centre:Point = new Point();
 		
 		public function Bullet(turret:Turret, startPos:Point) 
 		{
@@ -76,10 +76,13 @@ package
 					
 				if (collide("land", x, y))
 				{
-					AudioLazy.play("sfx_bullet_hit");
+					AudioLazy.playAt("sfx_bullet_hit", centerX, centerY);
 					
-					_terrain.makeHole(getPos(), 5);
-					_explode.detonate(Explode.SMALL, getPos(), 20);
+					_centre.x = centerX;
+					_centre.y = centerY;
+					
+					_terrain.makeHole(_centre, 5);
+					_explode.detonate(Explode.SMALL, _centre, 20);
 					destroy();
 				}
 			}
@@ -90,13 +93,6 @@ package
 		public function destroy():void
 		{
 			FP.world.remove(this);
-		}
-		
-		private function getPos():Point
-		{
-			_pos.x = x + 1;
-			_pos.y = y + 1;
-			return _pos;
 		}
 	}
 }
