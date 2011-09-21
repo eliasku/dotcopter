@@ -65,6 +65,8 @@ package
 			
 			if (!Music.hasMusic("sfx_tune"))
 				Music.add("sfx_tune");
+				
+			AudioManager.panorama = FP.width;
 		}
 		
 		override public function update():void 
@@ -72,7 +74,10 @@ package
 			if (Input.pressed(Key.M))
 			{
 				AudioManager.muted = !AudioManager.muted;
+				Music.muted = !Music.muted;
 			}
+			
+			AudioManager.update(0, 0);
 			
 			if (CoptGame.pauseMode)
 			{
