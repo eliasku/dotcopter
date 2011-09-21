@@ -5,6 +5,7 @@ package
 	import flash.display.BlendMode;
 	import flash.display.PixelSnapping;
 	import flash.display.Sprite;
+	import flash.filters.ColorMatrixFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -47,7 +48,9 @@ package
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
 		private var _gridAlpha:Number = 0.5;
+		
 		private var _legoMode:Boolean;
+		private var _blackAndWhite:Boolean;
 		
 		private static var _instance:LCDScreen;
 		
@@ -289,5 +292,29 @@ package
 		{
 			return _instance;
 		}
+
+		public function get blackAndWhite():Boolean
+		{
+			return _blackAndWhite;
+		}
+
+		public function set blackAndWhite(value:Boolean):void
+		{
+			_blackAndWhite = value;
+			
+			if(value)
+			{
+				_bufferBitmap.filters = [_bwf];
+			}
+			else
+			{
+				_bufferBitmap.filters = [];
+			}
+		}
+
+		private static const _bwr:Number = 1 / 3;
+		private static const _bwg:Number = 1 / 3;
+		private static const _bwb:Number = 1 / 3;
+		private static const _bwf:ColorMatrixFilter = new ColorMatrixFilter([_bwr, _bwg, _bwb, 0, 0, _bwr, _bwg, _bwb, 0, 0, _bwr, _bwg, _bwb, 0, 0, 0, 0, 0, 1, 0]);
 	}
 }
