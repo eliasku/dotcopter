@@ -18,8 +18,6 @@ package
 	 */
 	public class CoptGame extends World
 	{
-		public static const SCREEN_SIZE:int = 96; 
-		
 		public static var clickable:Boolean = true;
 		public static var started:Boolean = false;
 		public static var pauseMode:Boolean = false;

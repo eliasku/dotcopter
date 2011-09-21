@@ -1,5 +1,6 @@
 package draw
 {
+	import com.ek.asset.AssetManager;
 	import flash.display.BitmapData;
 	import flash.display.Shape;
 	import flash.geom.Matrix;
@@ -28,18 +29,15 @@ package draw
 		private var _source:ITerrain;
 		private var _points:Vector.<Point>;
 		
-		[Embed(source = '../../assets/mountain.png')] private const TILE:Class;
 		private var _pattern:BitmapData;
-		[Embed(source='../../assets/grass.png')] private const STROKE:Class;
 		private var _contour:BitmapData;
-		
 		private var _ground:Shape;
 		
 		public function Pencil()
 		{
 			_ground = new Shape();
-			_pattern = FP.getBitmap(TILE);
-			_contour = FP.getBitmap(STROKE);
+			_pattern = AssetManager.getBitmapData("gfx_tile_mountain");
+			_contour = AssetManager.getBitmapData("gfx_grass");
 		}
 		
 		public function setDrawingSource(source:Class):void

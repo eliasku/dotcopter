@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <asset>
+	<!-- битмапы -->
+	<item id="gfx_bg_forest0" url="gfx/bg_forest0.png" />
+	<item id="gfx_bg_forest1" url="gfx/bg_forest1.png" />
+	<item id="gfx_coin" url="gfx/coin.png" />
+	<item id="gfx_copter" url="gfx/copter.png" />
+	<item id="gfx_grass" url="gfx/grass.png" />
+	<item id="gfx_heart" url="gfx/heart.png" />
+	<item id="gfx_tile_mountain" url="gfx/tile_mountain.png" />
+	<item id="gfx_turret_gun" url="gfx/turret_gun.png" />
+	<item id="gfx_turret_tower" url="gfx/turret_tower.png" />
+	
 	<!-- Звуки/музыка -->
 	<item id="sfx_tune" url="sfx/tune.mp3" />
 	<item id="sfx_bullet_hit" url="sfx/bullet_hit.mp3" />

@@ -1,5 +1,6 @@
 package  
 {
+	import com.ek.asset.AssetManager;
 	import com.ek.audio.AudioLazy;
 	import flash.geom.Point;
 	import land.Landscape;
@@ -14,9 +15,6 @@ package
 	 */
 	public class Turret extends Entity 
 	{
-		[Embed(source='../assets/turret_tower.png')] private const TOWER:Class;
-		[Embed(source='../assets/turret_gun.png')] private const GUN:Class;
-		
 		public static const DISAPPEAR_OFFSET:int = -72;
 		public static const APPEAR_OFFSET:int = 24;
 		public static const HALF_WIDTH:int = 10;
@@ -41,8 +39,8 @@ package
 			_terrain = CoptGame.instance.terrain;
 			_copter = CoptGame.instance.copter;
 			
-			_tower = new Image(TOWER);
-			_gun = new Image(GUN);
+			_tower = new Image(AssetManager.getBitmapData("gfx_turret_tower"));
+			_gun = new Image(AssetManager.getBitmapData("gfx_turret_gun"));
 			
 			_gun.originX = 1;
 			_gun.x = 4;
