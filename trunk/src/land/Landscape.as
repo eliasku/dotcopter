@@ -70,7 +70,7 @@ package land
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingSource(Rock);
+			_pencil.setDrawingSource(Perlin);
 			
 			spaceGap = _pencil.drawingMargin;
 			

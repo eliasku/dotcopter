@@ -57,10 +57,16 @@ package bonus
 				
 				if (x + _coin.width < 0)
 				{
-					world.remove(this);
+					destroy();
 				}
 				super.update();
 			}
+		}
+		
+		public function destroy():void 
+		{
+			reset();
+			if (world) world.recycle(this);
 		}
 		
 		private function reset():void 

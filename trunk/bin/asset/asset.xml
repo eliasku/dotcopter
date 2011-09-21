@@ -10,6 +10,7 @@
 	<item id="gfx_tile_mountain" url="gfx/tile_mountain.png" />
 	<item id="gfx_turret_gun" url="gfx/turret_gun.png" />
 	<item id="gfx_turret_tower" url="gfx/turret_tower.png" />
+	<item id="gfx_eye_debug" url="gfx/eye_debug.png" />
 	
 	<!-- Звуки/музыка -->
 	<item id="sfx_tune" url="sfx/tune.mp3" />
