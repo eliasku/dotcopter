@@ -2,15 +2,13 @@ package
 {
 	import bonus.Coin;
 	import com.ek.audio.AudioLazy;
-	import com.ek.audio.AudioManager;
 	import com.ek.audio.Music;
+	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.media.SoundChannel;
-	import flash.media.SoundTransform;
 	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
-	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.masks.Pixelmask;
 	import net.flashpunk.utils.Input;
@@ -25,18 +23,13 @@ package
 		public const SPRITE_WIDTH:Number = 12;
 		public const SPRITE_HEIGHT:Number = 10;
 		
-		[Embed(source='../assets/heli.png')]
-		private const HELI:Class;
-		[Embed(source='../assets/heli_mask.png')]
-		private const COPTER_MASK:Class;
-		
-		private var _copterSpriteMap:Spritemap;
+		[Embed(source='../assets/heli.png')] private const HELI:Class;
+		private var _copter:Spritemap;
+		private var _copterMask:Pixelmask;
+		private var _maskBitmapData:BitmapData;
 		
 		public var maxLifes:int = 3;
 		public var lifes:int;
-		
-		private var coptMask:Image;
-		private var copt:Image;
 		
 		private var vy:Number = 0;
 		private var ay:Number = -0.35;
@@ -72,14 +65,21 @@ package
 			
 			x = FP.width * 0.3;
 			
-			_copterSpriteMap = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT);
-			_copterSpriteMap.add("fly", [0, 1, 2, 3, 4], 2, true);
-			graphic = _copterSpriteMap;
+			_copter = new Spritemap(HELI, SPRITE_WIDTH, SPRITE_HEIGHT);
+			_copter.add("fly", [0, 1, 2, 3, 4], 2, true);
+			_copter.play("fly");
+			_copter.centerOrigin();
+			graphic = _copter;
 			
-			_copterSpriteMap.play("fly");
+			var size:int = Math.ceil(Math.sqrt(_copter.width * _copter.width + _copter.height * _copter.height));
 			
-			coptMask = new Image(COPTER_MASK);
-			mask = new Pixelmask(coptMask.source);
+			_maskBitmapData = new BitmapData(size, size, true, 0);
+			var offset:Point = new Point(size * 0.5, size * 0.5);
+			_copterMask = new Pixelmask(_maskBitmapData, -offset.x, -offset.y);
+			_copter.render(_maskBitmapData, offset, FP.zero);
+			
+			mask = _copterMask;
+			
 			type = "copter";
 			
 			layer = ZSort.COPTER;
@@ -119,10 +119,7 @@ package
 				else if (vy < -maxspeed)
 					vy = -maxspeed;
 				
-				_copterSpriteMap.angle = -vy * 4;
-				// update pixelmask
-				coptMask.angle = _copterSpriteMap.angle;
-				mask = new Pixelmask(coptMask.source);
+				rotateCopter();
 				
 				_t++;
 				
@@ -159,7 +156,7 @@ package
 				var coin:Coin = collide("coin", x, y) as Coin;
 				if (coin)
 				{
-					AudioLazy.playAt("sfx_coin_collect", coin.centerX, coin.centerY);
+					AudioLazy.playAt("sfx_coin_collect", coin.centerX, coin.centerY, 0.2);
 					world.remove(coin);
 				}
 				
@@ -195,6 +192,17 @@ package
 			}
 			
 			super.update();
+		}
+		
+		private function rotateCopter(k:Number = 4):void 
+		{
+			_copter.angle = -vy * k;
+			
+			// updatePixelMask
+			_maskBitmapData.fillRect(_maskBitmapData.rect, 0);
+			FP.point.x = _maskBitmapData.width * 0.5;
+			FP.point.y = _maskBitmapData.height * 0.5;
+			_copter.render(_maskBitmapData, FP.point, FP.zero);
 		}
 		
 		private function dodge():void
@@ -244,7 +252,7 @@ package
 			_t = 0;
 			visible = true;	
 			
-			_copterSpriteMap.angle = 0;
+			_copter.angle = 0;
 			
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);

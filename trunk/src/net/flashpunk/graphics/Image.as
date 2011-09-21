@@ -293,6 +293,20 @@
 		
 		public function get classDef():Class { return _classDef; }
 		
+		public function setSource(value:BitmapData):void 
+		{
+			_source = value;
+			_sourceRect = _source.rect;
+			if (clipRect)
+			{
+				if (!clipRect.width) clipRect.width = _sourceRect.width;
+				if (!clipRect.height) clipRect.height = _sourceRect.height;
+				_sourceRect = clipRect;
+			}
+			createBuffer();
+			updateBuffer();
+		}
+		
 		// Source and buffer information.
 		/** @private */ protected var _source:BitmapData;
 		/** @private */ protected var _sourceRect:Rectangle;

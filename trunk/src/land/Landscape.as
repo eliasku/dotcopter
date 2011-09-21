@@ -48,6 +48,8 @@ package land
 		private var _prevShift:int;
 		private var _deltaShift:int = 0;
 		
+		private var _land:Image;
+		
 		public function Landscape()
 		{
 			_frame = new BitmapData(FP.width, PIECE_HEIGHT, true, Pencil.BLACK);
@@ -72,8 +74,12 @@ package land
 			
 			spaceGap = _pencil.drawingMargin;
 			
+			_land = new Image(_frame);
+			graphic = _land;
+			
 			reset();
 			
+			mask = new Pixelmask(_frame);
 			type = "land";
 			
 			layer = ZSort.LANDSCAPE;
@@ -122,8 +128,7 @@ package land
 			_frame.fillRect(_frameRect, Pencil.BLACK);
 			_frame.copyPixels(_pieces[_cur], _shiftRect, _dest);
 			
-			mask = new Pixelmask(_frame);
-			graphic = new Image(_frame);
+			_land.setSource(_frame);
 		}
 		
 		private function nextPiece():void
