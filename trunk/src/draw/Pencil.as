@@ -31,16 +31,15 @@ package draw
 		
 		private var _pattern:BitmapData;
 		private var _contour:BitmapData;
-		private var _ground:Shape;
+		private var _ground:Shape = new Shape();
 		
 		public function Pencil()
 		{
-			_ground = new Shape();
 			_pattern = AssetManager.getBitmapData("gfx_tile_mountain");
 			_contour = AssetManager.getBitmapData("gfx_grass");
 		}
 		
-		public function setDrawingMethod(method:Class):void
+		public function set drawingMethod(method:Class):void
 		{
 			_method = new method as ITerrain;
 		}
@@ -54,11 +53,10 @@ package draw
 			
 			_points = _method.generate(targetRect);
 			
-			if (_mode == DrawingMode.DOUBLE)
-				drawPart(TOP);
+			if (_mode == DrawingMode.DOUBLE) drawPart(TOP);
 			drawPart(BOTTOM);
 		}
-
+		
 		private function drawPart(dir:int):void
 		{
 			var sy:int = (dir > 0) ? _target.rect.top : _target.rect.bottom;
@@ -79,7 +77,6 @@ package draw
 			_ground.graphics.lineTo(ep.x, sy);
 			_ground.graphics.lineTo(sp.x, sy);
 			_ground.graphics.endFill();
-			
 			
 			_ground.graphics.lineStyle(_contour.height);
 			

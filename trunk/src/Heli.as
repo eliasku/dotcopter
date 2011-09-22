@@ -28,7 +28,6 @@ package
 		private var _copterMask:Pixelmask;
 		private var _maskBitmapData:BitmapData;
 		
-		public var maxLifes:int = 3;
 		public var lifes:int;
 		
 		private var vy:Number = 0;
@@ -58,8 +57,12 @@ package
 		private var _chLiftUp:SoundChannel;
 		private var _chLiftDown:SoundChannel;
 		
+		private var _pilot:IPilotage;
+		
 		public function Heli()
 		{
+			_pilot = new Player();
+			
 			_game = CoptGame.instance;
 			_screen = LCDScreen.instance;
 			
@@ -72,7 +75,6 @@ package
 			graphic = _copter;
 			
 			var size:int = Math.ceil(Math.sqrt(_copter.width * _copter.width + _copter.height * _copter.height));
-			
 			_maskBitmapData = new BitmapData(size, size, true, 0);
 			var offset:Point = new Point(size * 0.5, size * 0.5);
 			_copterMask = new Pixelmask(_maskBitmapData, -offset.x, -offset.y);
@@ -92,22 +94,18 @@ package
 		
 		override public function update():void
 		{
-			if (CoptGame.pauseMode)
-				return;
-
-			if (CoptGame.started)
+			if (GameState.pauseMode) return;
+			if (GameState.started || GameState.emulation)
 			{
-				if (Input.mousePressed || Input.pressed(Key.SPACE))
+				if (_pilot.controlUp)
 				{
 					boost = true;
-					
 					AudioLazy.setVolume(_chLiftUp, 0.2);
 					AudioLazy.setVolume(_chLiftDown, 0.0);
 				}
-				if (Input.mouseReleased || Input.released(Key.SPACE))
+				if (_pilot.controlDown)
 				{
 					boost = false;
-					
 					AudioLazy.setVolume(_chLiftUp, 0.0);
 					AudioLazy.setVolume(_chLiftDown, 0.2);
 				}
@@ -123,7 +121,7 @@ package
 				
 				_t++;
 				
-				if (lifes < maxLifes)
+				if (lifes < _pilot.maxLifes)
 					_game.trail.smoke(centre);
 				
 				updateGod();
@@ -229,8 +227,8 @@ package
 		
 		public function destroy():void
 		{
-			CoptGame.started = false;
-			CoptGame.clickable = false;
+			GameState.started = false;
+			GameState.active = false;
 			
 			Music.getMusic("sfx_tune").stop();
 			
@@ -264,13 +262,16 @@ package
 			if (isGod()) godMode(-1);
 			
 			if (_game.hud) _game.hud.resetHearts();
-			lifes = maxLifes;
+			lifes = _pilot.maxLifes;
 		}
 		
 		public function damage():void
 		{
-			lifes--;
-			_game.hud.changeHearts(-1);
+			if (!GameState.emulation)
+			{
+				lifes--;
+				_game.hud.changeHearts(-1);
+			}
 			
 			if (lifes == 0)
 			{
@@ -278,7 +279,7 @@ package
 			}
 			else
 			{
-				_game.trail.puffAmount = int(Trail.MAX_PUFF * (1 - lifes / maxLifes));
+				_game.trail.puffAmount = int(Trail.MAX_PUFF * (1 - lifes / _pilot.maxLifes));
 				
 				//trace("[copter]", "taking damage");
 				
@@ -345,6 +346,11 @@ package
 			_centre.x = x + 6;
 			_centre.y = y + 5;
 			return _centre;
+		}
+		
+		public function get pilot():IPilotage 
+		{
+			return _pilot;
 		}
 	}
 }

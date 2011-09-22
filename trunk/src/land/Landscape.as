@@ -69,7 +69,7 @@ package land
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingMethod(Perlin);
+			_pencil.drawingMethod = DrawingMethod.PERLIN;
 			
 			spaceGap = _pencil.drawingMargin;
 			
@@ -99,8 +99,8 @@ package land
 		
 		override public function update():void
 		{
-			if (CoptGame.pauseMode) return;
-			if (CoptGame.started)
+			if (GameState.pauseMode) return;
+			if (GameState.started || GameState.emulation)
 			{
 				_tempShift += vx;
 				_shiftRect.x = int(_tempShift);

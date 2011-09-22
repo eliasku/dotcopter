@@ -75,7 +75,7 @@ package ui
 			_heartsData = new Array(5);
 			for (i = 0; i < _heartsData.length; i++) 
 			{
-				_heartsData[i] = (i < _copter.maxLifes) ? 1 : -1;
+				_heartsData[i] = (i < _copter.pilot.maxLifes) ? 1 : -1;
 			}
 			
 			var heart:Spritemap;
@@ -113,7 +113,7 @@ package ui
 		{
 			for (var i:int = 0; i < _heartsData.length; i++) 
 			{
-				_heartsData[i] = (i < _copter.maxLifes) ? 1 : -1;
+				_heartsData[i] = (i < _copter.pilot.maxLifes) ? 1 : -1;
 			}
 			
 			updateHearts();
@@ -167,7 +167,7 @@ package ui
 		
 		override public function update():void
 		{
-			if (CoptGame.pauseMode) return;
+			if (GameState.pauseMode) return;
 			
 			_scoreText.text = score.toString();
 			

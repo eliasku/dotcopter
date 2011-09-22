@@ -26,7 +26,7 @@ package
 		
 		override public function render(target:BitmapData, point:Point, camera:Point):void 
 		{
-			if (CoptGame.started && !CoptGame.pauseMode)
+			if (GameState.started && !GameState.pauseMode)
 			{
 				_shift.x -= _terrain.vx * _kx;
 			} 
