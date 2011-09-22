@@ -99,14 +99,14 @@ package
 					//if (_dt % 30 == 0) create(Block);
 					//if (_dt % 60 == 0) create(Turret);
 					
-/*					if (_dt >= _accelDist)
+					if (_dt >= _accelDist)
 					{
 						_dt = 0;
 						terrain.vx += _accelAmount;
 						_accelDist = terrain.vx * _accelTime;
 						
 						AudioLazy.play("sfx_speed_up");
-					}*/
+					}
 				} 
 				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && CoptGame.clickable)
 				{

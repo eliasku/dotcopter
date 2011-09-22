@@ -11,7 +11,7 @@
 			FP.screen.color = 0xFF333333;
 			FP.screen.scale = 4;
 			
-			FP.world = new TerraGen();
+			FP.world = new CoptGame();
 		}
 	}
 }
