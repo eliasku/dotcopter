@@ -1,5 +1,6 @@
 package  
 {
+	import flash.geom.Point;
 	
 	/**
 	 * ...
@@ -11,6 +12,8 @@ package
 		
 		function get controlUp():Boolean;
 		function get controlDown():Boolean;
+		
+		function update(pos:Point):void;
 	}
 	
 }

@@ -48,7 +48,8 @@ package bonus
 		
 		override public function update():void 
 		{
-			if (GameState.started && !GameState.pauseMode)
+			if (GameState.pauseMode) return;
+			if (GameState.started || GameState.emulation)
 			{
 				x -= _terrain.deltaShift;
 				

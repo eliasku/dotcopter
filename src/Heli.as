@@ -61,7 +61,8 @@ package
 		
 		public function Heli()
 		{
-			_pilot = new Player();
+			GameState.emulation = true;
+			_pilot = new AutoPilot();
 			
 			_game = CoptGame.instance;
 			_screen = LCDScreen.instance;
@@ -175,6 +176,8 @@ package
 					y = _upLim + 2;
 				if (y + 10 > _downLim)
 					y = _downLim - 10;
+					
+				_pilot.update(centre);
 			}
 			
 			if (fraged)
@@ -255,7 +258,7 @@ package
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);
 			
-			var down:int = _game.terrain.getPlaceOffset(x + 6);
+			var down:int = _game.terrain.getPlaceOffset(centre.x);
 			y = down - _game.terrain.spaceGap * 0.5;
 			vy = 0;
 			
@@ -321,7 +324,7 @@ package
 			}
 		}
 		
-		private function godMode(duration:int = 10):void
+		private function godMode(duration:int = 30):void
 		{
 			_godTime = duration;
 			if (_godTime < 0)

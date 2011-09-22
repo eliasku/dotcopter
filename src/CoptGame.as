@@ -6,6 +6,8 @@ package
 	import com.ek.audio.AudioManager;
 	import com.ek.audio.Music;
 	import flash.media.SoundChannel;
+	import flash.media.SoundMixer;
+	import flash.media.SoundTransform;
 	import land.Landscape;
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Input;
@@ -50,6 +52,7 @@ package
 			
 			curtains = new Curtains(); add(curtains);
 			hud = new HUD(); add(hud);
+			hud.visible = !GameState.emulation;
 			
 			new Background();
 			
@@ -60,6 +63,9 @@ package
 				Music.add("sfx_tune");
 				
 			AudioManager.panorama = FP.width;
+			AudioManager.update(0, 0);
+			
+			SoundMixer.soundTransform = new SoundTransform(0.5);
 		}
 		
 		override public function update():void 
@@ -68,8 +74,6 @@ package
 			{
 				AudioManager.muted = !AudioManager.muted;
 			}
-			
-			AudioManager.update(0, 0);
 			
 			if (GameState.pauseMode)
 			{
@@ -82,7 +86,7 @@ package
 			else
 			{
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
-				if (GameState.started)
+				if (GameState.started || GameState.emulation)
 				{
 					_dt++;
 					
@@ -94,7 +98,7 @@ package
 					//if (_dt % 30 == 0) create(Block);
 					//if (_dt % 60 == 0) create(Turret);
 					
-					if (_dt >= _accelDist)
+					if (_dt >= _accelDist && !GameState.emulation)
 					{
 						_dt = 0;
 						terrain.vx += _accelAmount;
