@@ -20,6 +20,7 @@ package draw
 		public static const BLACK:uint = 0x00000000;
 		public static const WHITE:uint = 0xFFFFFFFF;
 		public static const RED:uint = 0xFFFF0000;
+		public static const BLUE:uint = 0xFF0000FF;
 		
 		private static const TOP:int = 1;
 		private static const BOTTOM:int = -1;

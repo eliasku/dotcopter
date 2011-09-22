@@ -16,6 +16,8 @@ package
 		
 		private var _terrain:Landscape;
 		
+		private const WARNING_DISTANCE:int = 40;
+		
 		public function AutoPilot()
 		{
 			_terrain = CoptGame.instance.terrain;
@@ -23,11 +25,15 @@ package
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point):void
+		public function update(pos:Point, vy:Number):void
 		{
-			var middle:int = _terrain.getPlaceOffset(pos.x) - _terrain.spaceGap * 0.5;
+			var bottom:int = _terrain.getPlaceOffset(pos.x);
+			var top:int = bottom - _terrain.spaceGap;
 			
-			if (pos.y < middle)
+			var dt:int = pos.y - top;
+			var db:int = bottom - pos.y;
+			
+			if (dt < db)
 			{
 				_controlUp = false;
 				_controlDown = true;

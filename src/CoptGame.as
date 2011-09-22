@@ -20,8 +20,6 @@ package
 	 */
 	public class CoptGame extends World
 	{
-		private static var _instance:CoptGame;
-		
 		public var copter:Heli;
 		public var terrain:Landscape;
 		public var shaker:Shaker;
@@ -38,6 +36,8 @@ package
 		
 		private var _chTune:SoundChannel;
 		
+		private static var _instance:CoptGame;
+		
 		public function CoptGame() 
 		{
 			if (_instance) return;
@@ -47,6 +47,7 @@ package
 			terrain = new Landscape(); add(terrain); 
 			
 			copter = new Heli(); add(copter); 
+			
 			trail = new Trail(); addGraphic(trail, ZSort.COPTER);
 			explode = new Explode(); addGraphic(explode, ZSort.BOOM);
 			
