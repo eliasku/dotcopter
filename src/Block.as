@@ -41,7 +41,7 @@ package
 		
 		override public function update():void 
 		{
-			if (CoptGame.started && !CoptGame.pauseMode)
+			if (GameState.started && !GameState.pauseMode)
 			{
 				x -= _terrain.vx;
 				y = _terrain.getPlaceOffset(x + _block.width * 0.5) - _block.height - _place;

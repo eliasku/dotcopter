@@ -18,10 +18,6 @@ package
 	 */
 	public class CoptGame extends World
 	{
-		public static var clickable:Boolean = true;
-		public static var started:Boolean = false;
-		public static var pauseMode:Boolean = false;
-		
 		private static var _instance:CoptGame;
 		
 		public var copter:Heli;
@@ -46,7 +42,6 @@ package
 			_instance = this;     
 			
 			shaker = new Shaker();
-			
 			terrain = new Landscape(); add(terrain); 
 			
 			copter = new Heli(); add(copter); 
@@ -76,18 +71,18 @@ package
 			
 			AudioManager.update(0, 0);
 			
-			if (CoptGame.pauseMode)
+			if (GameState.pauseMode)
 			{
 				if (Input.mousePressed || Input.pressed(Key.SPACE))
 				{
-					CoptGame.pauseMode = false;
+					GameState.pauseMode = false;
 				}
 				return;
 			} 
 			else
 			{
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
-				if (started)
+				if (GameState.started)
 				{
 					_dt++;
 					
@@ -108,9 +103,9 @@ package
 						AudioLazy.play("sfx_speed_up");
 					}
 				} 
-				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && CoptGame.clickable)
+				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && GameState.active)
 				{
-					started = true;
+					GameState.started = true;
 					Music.getMusic("sfx_tune").play();
 				}
 				
@@ -121,12 +116,12 @@ package
 		
 		public function stopGame():void
 		{
-			CoptGame.pauseMode = true;
+			GameState.pauseMode = true;
 		}
 		
 		public function reset():void
 		{
-			CoptGame.clickable = true;
+			GameState.active = true;
 			
 			terrain.reset();
 			copter.reset();

@@ -60,7 +60,7 @@ package
 		
 		override public function update():void 
 		{
-			if (CoptGame.started && !CoptGame.pauseMode)
+			if (GameState.started && !GameState.pauseMode)
 			{
 				x -= _terrain.deltaShift;
 				
