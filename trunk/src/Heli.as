@@ -177,7 +177,7 @@ package
 				if (y + 10 > _downLim)
 					y = _downLim - 10;
 					
-				_pilot.update(centre);
+				_pilot.update(centre, vy);
 			}
 			
 			if (fraged)

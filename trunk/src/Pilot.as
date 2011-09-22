@@ -18,7 +18,7 @@ package
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point):void 
+		public function update(pos:Point, vy:Number):void 
 		{
 			
 		}
