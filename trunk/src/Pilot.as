@@ -1,21 +1,27 @@
 package  
 {
+	import flash.geom.Point;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	/**
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Player implements IPilotage 
+	public class Pilot implements IPilotage 
 	{
 		private var _maxLifes:int = 3;
 		
-		public function Player() 
+		public function Pilot() 
 		{
 			
 		}
 		
 		/* INTERFACE IPilotage */
+		
+		public function update(pos:Point):void 
+		{
+			
+		}
 		
 		public function get controlUp():Boolean 
 		{

@@ -69,7 +69,7 @@ package land
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.drawingMethod = DrawingMethod.PERLIN;
+			_pencil.drawingMethod = DrawingMethod.FRACTAL;
 			
 			spaceGap = _pencil.drawingMargin;
 			
