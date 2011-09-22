@@ -1,13 +1,14 @@
-package land 
+package draw 
 {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import land.ITerrain;
 	import net.flashpunk.FP;
 	/**
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Rock implements ITerrain 
+	public class Fractal implements ITerrain 
 	{
 		private var _maxHeight:int;
 		private var _reduction:Number;
@@ -15,7 +16,7 @@ package land
 		
 		private var _points:Vector.<Point>;
 		
-		public function Rock() 
+		public function Fractal() 
 		{
 			// default params
 			_maxHeight = FP.height * 0.75;
@@ -36,6 +37,7 @@ package land
 		private function setPoints(sx:int, ex:int, dir:int = 1):Vector.<Point>
 		{
 			var points:Vector.<Point> = new Vector.<Point>();
+			var p:Point = new Point();
 			var p1:Point = new Point(sx, 0);
 			var p2:Point = new Point(ex, 0);
 			points[0] = p1;
@@ -54,7 +56,10 @@ package land
 					p1 = points[i];
 					p2 = points[i - 1];
 					
-					points.splice(i, 0, new Point((p1.x - p2.x) * 0.5 + p2.x, (p1.y - p2.y) * 0.5 + p2.y - rand));
+					p.x = (p1.x - p2.x) * 0.5 + p2.x;
+					p.y = (p1.y - p2.y) * 0.5 + p2.y - rand;
+					
+					points.splice(i, 0, p.clone());
 				}
 			}
 			

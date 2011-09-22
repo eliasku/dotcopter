@@ -1,13 +1,14 @@
-package land 
+package draw 
 {
 	import flash.geom.Rectangle;
 	import flash.geom.Point;
+	import land.ITerrain;
 	import net.flashpunk.FP;
 	/**
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Plain implements ITerrain 
+	public class Cosine implements ITerrain 
 	{
 		private var _maxHeight:int;
 		private var _points:Vector.<Point>;
@@ -16,7 +17,7 @@ package land
 		private var _roughness:int;
 		private var _screenOffset:int;
 		
-		public function Plain() 
+		public function Cosine() 
 		{
 			// default params
 			_maxHeight = FP.halfHeight * 0.5;

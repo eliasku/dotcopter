@@ -1,7 +1,6 @@
 package land
 {
-	import draw.DrawingMode;
-	import draw.Pencil;
+	import draw.*;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
 	import flash.display.Shape;
@@ -70,7 +69,7 @@ package land
 			
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.setDrawingSource(Perlin);
+			_pencil.setDrawingMethod(Perlin);
 			
 			spaceGap = _pencil.drawingMargin;
 			

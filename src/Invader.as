@@ -1,5 +1,6 @@
 package  
 {
+	import draw.Pencil;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -28,13 +29,13 @@ package
 		{
 			FP.randomizeSeed();
 			
-			_source = new BitmapData(INVADER_WIDTH, INVADER_HEIGHT, true, Rocks.BLACK);
+			_source = new BitmapData(INVADER_WIDTH, INVADER_HEIGHT, true, Pencil.BLACK);
 			_sourceRect = new Rectangle(0, 0, INVADER_WIDTH, INVADER_HEIGHT);
 			
 			var newW:Number = _source.width * MULT;
 			var newH:Number = _source.height * MULT;
 			
-			_copy = new BitmapData(newW, newH, true, Rocks.BLACK);
+			_copy = new BitmapData(newW, newH, true, Pencil.BLACK);
 			_copyRect = new Rectangle(0, 0, newW, newH);
 			
 			_copyMatrix = new Matrix();
@@ -45,9 +46,9 @@ package
 		
 		private function generate():void
 		{
-			var color:uint = Rocks.WHITE;
+			var color:uint = Pencil.WHITE;
 			_source.lock();
-			_source.fillRect(_sourceRect, Rocks.BLACK);
+			_source.fillRect(_sourceRect, Pencil.BLACK);
 			var span:int = Math.ceil(INVADER_WIDTH * 0.5);
 			for (var y:int = 0; y < INVADER_HEIGHT; ++y)
 			{
@@ -63,7 +64,7 @@ package
 			}
 			_source.unlock();
 			
-			_copy.fillRect(_copyRect, Rocks.BLACK);
+			_copy.fillRect(_copyRect, Pencil.BLACK);
 			_copy.draw(_source, _copyMatrix);
 		}
 
@@ -79,7 +80,7 @@ package
 			var matrix:Matrix = new Matrix();
 			matrix.scale(mult, mult);
 			
-			var data:BitmapData = new BitmapData(bmd.width * mult,  bmd.height * mult, true, Rocks.BLACK);
+			var data:BitmapData = new BitmapData(bmd.width * mult,  bmd.height * mult, true, Fractals.BLACK);
 			data.draw(bmd, matrix);
 			
 			return data;

@@ -26,7 +26,7 @@ package draw
 		
 		private var _target:BitmapData;
 		private var _mode:String;
-		private var _source:ITerrain;
+		private var _method:ITerrain;
 		private var _points:Vector.<Point>;
 		
 		private var _pattern:BitmapData;
@@ -40,9 +40,9 @@ package draw
 			_contour = AssetManager.getBitmapData("gfx_grass");
 		}
 		
-		public function setDrawingSource(source:Class):void
+		public function setDrawingMethod(method:Class):void
 		{
-			_source = new source as ITerrain;
+			_method = new method as ITerrain;
 		}
 		
 		public function drawIn(target:BitmapData, targetRect:Rectangle):void
@@ -52,7 +52,7 @@ package draw
 			target.fillRect(target.rect, BLACK);
 			Draw.setTarget(_target);
 			
-			_points = _source.generate(targetRect);
+			_points = _method.generate(targetRect);
 			
 			if (_mode == DrawingMode.DOUBLE)
 				drawPart(TOP);
@@ -74,7 +74,7 @@ package draw
 			{
 /*				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, WHITE);
 				Draw.line(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i-1].x, sy, WHITE);*/
-				_ground.graphics.lineTo(_points[i].x, sy + dir * _source.maxSize - _points[i].y);
+				_ground.graphics.lineTo(_points[i].x, sy + dir * _method.maxSize - _points[i].y);
 			}
 			_ground.graphics.lineTo(ep.x, sy);
 			_ground.graphics.lineTo(sp.x, sy);
@@ -87,10 +87,10 @@ package draw
 			if (dir > 0) matrix.rotate(Math.PI);
 			
 			_ground.graphics.lineBitmapStyle(_contour, matrix);
-			_ground.graphics.moveTo(sp.x, sy + dir * _source.maxSize - sp.y);
+			_ground.graphics.moveTo(sp.x, sy + dir * _method.maxSize - sp.y);
 			for (i = 1; i < _points.length; i++)
 			{
-				_ground.graphics.lineTo(_points[i].x, sy + dir * _source.maxSize - _points[i].y);
+				_ground.graphics.lineTo(_points[i].x, sy + dir * _method.maxSize - _points[i].y);
 			}
 			
 			//Draw.line(sp.x, sy, ep.x, sy, WHITE);
@@ -115,7 +115,7 @@ package draw
 		
 		public function get drawingMargin():int
 		{
-			return _source.maxSize * 2;
+			return _method.maxSize * 2;
 		}
 		
 		public function set drawingMode(mode:String):void 
