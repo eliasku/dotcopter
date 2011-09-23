@@ -120,5 +120,10 @@ package draw
 		{
 			_mode = mode;
 		}
+		
+		public function get drawingMode():String 
+		{
+			return _mode;
+		}
 	}
 }

@@ -12,8 +12,6 @@ package
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.masks.Pixelmask;
-	import net.flashpunk.utils.Input;
-	import net.flashpunk.utils.Key;
 	
 	/**
 	 * ...
@@ -163,8 +161,8 @@ package
 				
 				if (isGod())
 				{
-					var down:int = _game.terrain.getPlaceOffset(x + 6);
-					var up:int = down - _game.terrain.spaceGap;
+					var up:int =  _game.terrain.getPlaceOffset(centre.x, 1);
+					var down:int = _game.terrain.getPlaceOffset(centre.x, -1);
 					
 					if (y + 8 > down)
 						y = down - 8;
@@ -176,8 +174,14 @@ package
 					y = _upLim + 2;
 				if (y + 10 > _downLim)
 					y = _downLim - 10;
-					
-				_pilot.update(centre, vy);
+				
+				var fpos:Point = centre.clone();
+				//var dir:int = (boost) ? 1 : -1;
+				var scan:int = 25; //(boost) ? 20 : 5;
+				fpos.x = _game.terrain.deltaShift * scan;
+				fpos.y = proceed(1 , scan);
+				
+				_pilot.update(centre, fpos);
 			}
 			
 			if (fraged)
@@ -195,6 +199,26 @@ package
 			super.update();
 		}
 		
+		public function proceed(dir:int, steps:int):int
+		{
+			var ty:int = y;
+			var tvy:Number = vy;
+			
+			while (steps > 0)
+			{
+				tvy += (dir>0) ? ay : gravity;
+				if (tvy > maxspeed + 0.5)
+					tvy = maxspeed + 0.5;
+				else if (tvy < -maxspeed)
+					tvy = -maxspeed;
+				
+				ty += tvy;	
+				steps--;
+			}
+			
+			return ty;
+		}
+		
 		private function rotateCopter(k:Number = 4):void 
 		{
 			_copter.angle = -vy * k;
@@ -208,10 +232,10 @@ package
 		
 		private function dodge():void
 		{
-			var down:int = _game.terrain.getPlaceOffset(x + 6);
-			var up:int = down - _game.terrain.spaceGap;
-			
+			var up:int = _game.terrain.getPlaceOffset(centre.x, 1);
+			var down:int = _game.terrain.getPlaceOffset(centre.x, -1);
 			var middle:int = (up + down) * 0.5;
+			
 			if (y + 5 > middle)
 			{
 				// вниз
@@ -258,8 +282,10 @@ package
 			AudioLazy.setVolume(_chLiftUp, 0.0);
 			AudioLazy.setVolume(_chLiftDown, 0.0);
 			
-			var down:int = _game.terrain.getPlaceOffset(centre.x);
-			y = down - _game.terrain.spaceGap * 0.5;
+			var up:int = _game.terrain.getPlaceOffset(centre.x, 1);
+			var down:int = _game.terrain.getPlaceOffset(centre.x, -1);
+			
+			y = up + (down - up) * 0.5;
 			vy = 0;
 			
 			if (isGod()) godMode(-1);
