@@ -13,7 +13,7 @@ package
 		function get controlUp():Boolean;
 		function get controlDown():Boolean;
 		
-		function update(pos:Point, vy:Number):void;
+		function update(pos:Point, fpos:Point):void;
 	}
 	
 }

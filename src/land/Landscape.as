@@ -23,7 +23,7 @@ package land
 		public static const PIECE_DOUBLE_WIDTH:int = FP.width * 8;
 		public static const PIECE_HEIGHT:int = FP.height * 2;
 		
-		public static const INIT_SPEED:Number = 3.5;
+		public static const INIT_SPEED:Number = 3;
 		
 		private var _frame:BitmapData;
 		private var _frameRect:Rectangle;
@@ -42,7 +42,6 @@ package land
 		private var _hole:Shape = new Shape();
 		
 		public var vx:Number = INIT_SPEED;
-		public var spaceGap:int;
 		
 		private var _prevShift:int;
 		private var _deltaShift:int = 0;
@@ -70,8 +69,6 @@ package land
 			_pencil = new Pencil();
 			_pencil.drawingMode = DrawingMode.DOUBLE;
 			_pencil.drawingMethod = DrawingMethod.FRACTAL;
-			
-			spaceGap = _pencil.drawingMargin;
 			
 			_land = new Image(_frame);
 			graphic = _land;
@@ -163,17 +160,19 @@ package land
 			updatePiece();
 		}
 		
-		public function getPlaceOffset(px:int):int
+		public function getPlaceOffset(px:int, dir:int = -1):int
 		{
+			if (_pencil.drawingMode == DrawingMode.SINGLE && dir > 0) return 0;
+			
 			var curPiece:BitmapData = _pieces[_cur];
 			
 			px += _shiftRect.x;
-			var sy:int = _pieceRect.bottom - 1;
+			var sy:int = (dir < 0) ? _pieceRect.bottom - 1 : _pieceRect.top;
 			
 			var pixel:uint = curPiece.getPixel32(px, sy); 
-			while (((pixel >> 24) & 0xFF) > 0 && sy > 0)
+			while (((pixel >> 24) & 0xFF) > 0) // && sy > 0 TODO: exit from loop condition
 			{
-				sy--;
+				sy += dir;
 				pixel = curPiece.getPixel32(px, sy);
 			}
 			

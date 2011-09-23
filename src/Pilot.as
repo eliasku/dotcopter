@@ -18,7 +18,7 @@ package
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point, vy:Number):void 
+		public function update(pos:Point):void 
 		{
 			
 		}
@@ -32,8 +32,6 @@ package
 		{
 			return Input.mouseReleased || Input.released(Key.SPACE);
 		}
-		
-		/* INTERFACE IPilotage */
 		
 		public function get maxLifes():int 
 		{

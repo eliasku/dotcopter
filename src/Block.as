@@ -63,7 +63,7 @@ package
 		private function reset():void 
 		{
 			x = FP.width;
-			_place = (_terrain.spaceGap - _block.height * 2) * FP.random;
+			//_place = (_terrain.spaceGap - _block.height * 2) * FP.random;
 			y = _terrain.getPlaceOffset(x + _block.width * 0.5) - _block.height - _place;
 		}
 		

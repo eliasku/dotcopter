@@ -58,7 +58,7 @@ package
 			new Background();
 			
 			_accelTime = _accelDist / terrain.vx;
-			BonusLayout.replace();
+			BonusLayout.firstPlace();
 			
 			if (!Music.hasMusic("sfx_tune"))
 				Music.add("sfx_tune");
@@ -94,7 +94,7 @@ package
 					if (_dt % 2 == 0) HUD.score++;
 					
 					if (_dt % 5 == 0) create(Coin);
-					if (_dt % 60 == 0) BonusLayout.replace();
+					if (_dt % 60 == 0 && !GameState.emulation) BonusLayout.replace();
 					
 					//if (_dt % 30 == 0) create(Block);
 					//if (_dt % 60 == 0) create(Turret);
@@ -149,7 +149,7 @@ package
 			}*/
 			HUD.score = 0;
 			
-			BonusLayout.replace();
+			BonusLayout.firstPlace();
 		}
 		
 		private function resetBlocks():void 

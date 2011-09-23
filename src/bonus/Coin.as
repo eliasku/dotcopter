@@ -18,12 +18,8 @@ package bonus
 		private const AMPLITUDE:Number = 4;
 		
 		private var _halfWidth:int;
-		private var _doubleHeight:int;
 		
 		private var _coin:Image;
-		
-		private var _offset:int;
-		
 		private var _terrain:Landscape;
 		
 		private var _t:Number;
@@ -35,7 +31,6 @@ package bonus
 			
 			_coin = new Image(AssetManager.getBitmapData("gfx_coin"));
 			_halfWidth = _coin.width * 0.5;
-			_doubleHeight = _coin.height * 2;
 			
 			reset();
 			graphic = _coin;
@@ -53,7 +48,11 @@ package bonus
 			{
 				x -= _terrain.deltaShift;
 				
-				_ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
+				var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
+				var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
+				var middle:int = top + (bottom - top) * BonusLayout.place;
+				
+				_ty = middle;
 				y = _ty + Math.sin(_t += STEP) * AMPLITUDE;
 				
 				if (x + _coin.width < 0)
@@ -76,8 +75,11 @@ package bonus
 			
 			x = FP.width;	
 			
-			_offset = (_terrain.spaceGap - _doubleHeight) * BonusLayout.place;
-			y = _ty = _terrain.getPlaceOffset(x + _halfWidth) - _coin.height - _offset;
+			var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
+			var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
+			var middle:int = top + (bottom - top) * BonusLayout.place;
+			
+			y = _ty = middle;
 		}
 	}
 
