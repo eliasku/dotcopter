@@ -5,51 +5,57 @@ package
 	import draw.Pencil;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
+	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Graphiclist;
 	
 	/**
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Background
-	{
-		private var _game:CoptGame;
-		
-		private var _background:Back;
-		private var _foreground:Back;
+	public class Background extends Entity
+	{		
+		private var _gfxList:Graphiclist;
 		
 		public function Background()
 		{
-			_game = CoptGame.instance;
+			_gfxList = new Graphiclist();
 			
+			reset();
+			
+			graphic = _gfxList;
+			
+			layer = Layer.BG;
+		}
+		
+		public function reset():void 
+		{
+			if (_gfxList.count > 0)
+				_gfxList.removeAll();
+				
 			var bg:BitmapData;
 			var back:Back;
 			
 			bg = AssetManager.getBitmapData(Level.background);
 			back = new Back(bg, 0.2, 0.0);
-			_game.addGraphic(back, Layer.BG);
+			_gfxList.add(back);
 			
 			if (Level.stars)
 			{
 				bg = generateStars(26, 0.3);
 				back = new Back(bg, 0.2, 0.0);
-				_game.addGraphic(back, Layer.BG);
+				_gfxList.add(back);
 				
 				bg = generateStars(13, 0.6);
 				back = new Back(bg, 0.4, 0.0);
-				_game.addGraphic(back, Layer.BG);
+				_gfxList.add(back);
 			}
 			
 			// TODO: insert middle plane if any
 			
 			bg = mirror(AssetManager.getBitmapData(Level.foreground));
 			back = new Back(bg, 1.0, 1.0);
-			_game.addGraphic(back, Layer.BG);
-		}
-		
-		public function reset():void 
-		{
-			// TODO: reset all graphics content
+			_gfxList.add(back);
 		}
 		
 		private function mirror(source:BitmapData):BitmapData
@@ -65,10 +71,6 @@ package
 				matrix.rotate(Math.PI);
 				matrix.translate(top.width, top.height);
 				back.draw(top, matrix);
-			}
-			else
-			{
-				
 			}
 			
 			matrix = new Matrix();

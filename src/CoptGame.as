@@ -59,7 +59,7 @@ package
 			hud = new HUD(); add(hud);
 			curtains = new Curtains(); add(curtains);
 			
-			bg = new Background();
+			bg = new Background(); add(bg);
 			
 			_accelTime = _accelDist / terrain.vx;
 			BonusLayout.firstPlace();
