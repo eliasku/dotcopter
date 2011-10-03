@@ -13,12 +13,12 @@ package
 		
 		public function Pilot() 
 		{
-			
+			GameState.emulation = false;
 		}
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point):void 
+		public function update(pos:Point,  fpos:Point):void 
 		{
 			
 		}

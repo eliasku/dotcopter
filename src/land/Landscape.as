@@ -17,7 +17,7 @@ package land
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Landscape extends Entity
+	public class Landscape extends Entity implements IMoveable
 	{
 		public static const PIECE_WIDTH:int = FP.width * 4;
 		public static const PIECE_DOUBLE_WIDTH:int = FP.width * 8;
@@ -41,7 +41,7 @@ package land
 		private var _pencil:Pencil;
 		private var _hole:Shape = new Shape();
 		
-		public var vx:Number = INIT_SPEED;
+		private var _vx:Number = INIT_SPEED;
 		
 		private var _prevShift:int;
 		private var _deltaShift:int = 0;
@@ -66,24 +66,26 @@ package land
 			_threshold = PIECE_WIDTH + FP.width;
 			_mergeMatrix = new Matrix(1, 0, 0, 1, PIECE_WIDTH, 0);
 			
-			_pencil = new Pencil();
-			_pencil.drawingMode = DrawingMode.DOUBLE;
-			_pencil.drawingMethod = DrawingMethod.FRACTAL;
-			
 			_land = new Image(_frame);
 			graphic = _land;
+			
+			_pencil = new Pencil();
 			
 			reset();
 			
 			mask = new Pixelmask(_frame);
 			type = "land";
 			
-			layer = ZSort.LANDSCAPE;
+			layer = Layer.GROUND;
 		}
 		
 		public function reset():void
 		{
-			vx = INIT_SPEED;
+			_vx = INIT_SPEED;
+			
+			_pencil.resetStyle();
+			_pencil.drawingMode = Level.drawingMode;
+			_pencil.drawingMethod = Level.drawingMethod;
 			
 			_pencil.drawIn(_pieces[_cur], _pieceRect);
 			nextPiece();
@@ -99,7 +101,7 @@ package land
 			if (GameState.pauseMode) return;
 			if (GameState.started || GameState.emulation)
 			{
-				_tempShift += vx;
+				_tempShift += _vx;
 				_shiftRect.x = int(_tempShift);
 				
 				if (_shiftRect.right > _threshold)
@@ -185,13 +187,25 @@ package land
 			_pieces[_cur].copyPixels(source, source.rect, pos);
 		}
 		
+		/* INTERFACE IMoveable */
+		
+		public function get vx():Number 
+		{
+			return _vx;
+		}
+		
+		public function set vx(value:Number):void 
+		{
+			// TODO: запомнить поэтапное увелечяение скорости
+			_vx = value;
+		}
+		
 		public function get deltaShift():int 
 		{
 			if (_deltaShift < 0)
 				_deltaShift += PIECE_WIDTH;
 			return _deltaShift;
 		}
-		
 	}
 
 }

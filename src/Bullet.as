@@ -3,6 +3,7 @@ package
 	import com.ek.audio.AudioLazy;
 	import draw.Pencil;
 	import flash.geom.Point;
+	import flash.utils.setTimeout;
 	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
@@ -49,7 +50,7 @@ package
 			setHitbox(2, 2);
 			type = "bullet";
 			
-			layer = ZSort.TURRET;
+			layer = Layer.ENEMY;
 			
 			//_g = (turret.flipped) ? 0 : 0.1;
 			//_power = (turret.flipped) ? 3 : 4;

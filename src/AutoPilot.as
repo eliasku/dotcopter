@@ -23,6 +23,8 @@ package
 		
 		public function AutoPilot()
 		{
+			GameState.emulation = true;
+			
 			_terrain = CoptGame.instance.terrain;
 		}
 		

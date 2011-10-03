@@ -26,7 +26,7 @@ package
 		private var _degree:Number = 180;
 		
 		private var _terrain:Landscape;
-		private var _copter:Heli;
+		private var _copter:Copter;
 		
 		private var _tower:Image;
 		private var _gun:Image;
@@ -55,7 +55,7 @@ package
 			
 			type = "turret";
 			
-			layer = ZSort.TURRET;
+			layer = Layer.ENEMY;
 		}
 		
 		override public function update():void 

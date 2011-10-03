@@ -17,7 +17,7 @@ package
 	 * ...
 	 * @author Gleb Volkov
 	 */
-	public class Heli extends Entity
+	public class Copter extends Entity
 	{
 		public const SPRITE_WIDTH:Number = 12;
 		public const SPRITE_HEIGHT:Number = 10;
@@ -28,10 +28,11 @@ package
 		
 		public var lifes:int;
 		
-		private var vy:Number = 0;
-		private var ay:Number = -0.35;
-		private var gravity:Number = 0.2;
-		private var maxspeed:Number = 2;
+		private var _vy:Number = 0;
+		private var _ay:Number = -0.35;
+		private var _gravity:Number = 0.2;
+		private var _maxUp:Number = 2;
+		private var _maxDown:Number = 2.5;
 		
 		private var boost:Boolean = false;
 		private var amt:Number = 0.05;
@@ -57,10 +58,9 @@ package
 		
 		private var _pilot:IPilotage;
 		
-		public function Heli()
+		public function Copter()
 		{
-			GameState.emulation = true;
-			_pilot = new AutoPilot();
+			_pilot = new Pilot();
 			
 			_game = CoptGame.instance;
 			_screen = LCDScreen.instance;
@@ -83,7 +83,7 @@ package
 			
 			type = "copter";
 			
-			layer = ZSort.COPTER;
+			layer = Layer.HERO;
 			
 			_chLiftUp = AudioLazy.loop("sfx_lift_up");
 			_chLiftDown = AudioLazy.loop("sfx_lift_down");
@@ -109,12 +109,9 @@ package
 					AudioLazy.setVolume(_chLiftDown, 0.2);
 				}
 				
-				vy += (boost) ? ay : gravity;
-				
-				if (vy > maxspeed + 0.5)
-					vy = maxspeed + 0.5;
-				else if (vy < -maxspeed)
-					vy = -maxspeed;
+				_vy += (boost) ? _ay : _gravity;
+				if (_vy > _maxDown) _vy = _maxDown;
+				if (_vy < -_maxUp) _vy = -_maxUp;
 				
 				rotateCopter();
 				
@@ -139,15 +136,6 @@ package
 						damage();
 					}
 					
-/*					var block:Block = collide("block", x, y) as Block;
-					if (block)
-					   {
-					   _game.terrain.stamp(block.clone(), block.pos);
-					
-					   block.destroy();
-					
-					   damage();
-					}*/
 				}
 				
 				var coin:Coin = collide("coin", x, y) as Coin;
@@ -157,7 +145,7 @@ package
 					world.remove(coin);
 				}
 				
-				y += vy;
+				y += _vy;
 				
 				if (isGod())
 				{
@@ -174,14 +162,15 @@ package
 					y = _upLim + 2;
 				if (y + 10 > _downLim)
 					y = _downLim - 10;
-				
-				var fpos:Point = centre.clone();
-				//var dir:int = (boost) ? 1 : -1;
-				var scan:int = 25; //(boost) ? 20 : 5;
-				fpos.x = _game.terrain.deltaShift * scan;
-				fpos.y = proceed(1 , scan);
-				
-				_pilot.update(centre, fpos);
+					
+				if (GameState.emulation)
+				{
+					var fpos:Point = centre.clone();
+					var scan:int = 25;
+					fpos.x = _game.terrain.deltaShift * scan;
+					fpos.y = proceed(1 , scan);
+					_pilot.update(centre, fpos);
+				}
 			}
 			
 			if (fraged)
@@ -202,15 +191,15 @@ package
 		public function proceed(dir:int, steps:int):int
 		{
 			var ty:int = y;
-			var tvy:Number = vy;
+			var tvy:Number = _vy;
 			
 			while (steps > 0)
 			{
-				tvy += (dir>0) ? ay : gravity;
-				if (tvy > maxspeed + 0.5)
-					tvy = maxspeed + 0.5;
-				else if (tvy < -maxspeed)
-					tvy = -maxspeed;
+				tvy += (dir>0) ? _ay : _gravity;
+				if (tvy > _maxUp + 0.5)
+					tvy = _maxUp + 0.5;
+				else if (tvy < -_maxUp)
+					tvy = -_maxUp;
 				
 				ty += tvy;	
 				steps--;
@@ -221,7 +210,7 @@ package
 		
 		private function rotateCopter(k:Number = 4):void 
 		{
-			_copter.angle = -vy * k;
+			_copter.angle = -_vy * k;
 			
 			// updatePixelMask
 			_maskBitmapData.fillRect(_maskBitmapData.rect, 0);
@@ -239,14 +228,14 @@ package
 			if (y + 5 > middle)
 			{
 				// вниз
-				if (vy > 0)
-					vy *= -1;
+				if (_vy > 0)
+					_vy *= -1;
 			}
 			else
 			{
 				// вверх
-				if (vy < 0)
-					vy *= -1;
+				if (_vy < 0)
+					_vy *= -1;
 			}
 			
 			damage();
@@ -286,7 +275,7 @@ package
 			var down:int = _game.terrain.getPlaceOffset(centre.x, -1);
 			
 			y = up + (down - up) * 0.5;
-			vy = 0;
+			_vy = 0;
 			
 			if (isGod()) godMode(-1);
 			
@@ -374,6 +363,7 @@ package
 		{
 			_centre.x = x + 6;
 			_centre.y = y + 5;
+
 			return _centre;
 		}
 		

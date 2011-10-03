@@ -34,7 +34,7 @@ package ui
 		private var _hearts:Vector.<Spritemap> = new Vector.<Spritemap>();
 		private var _heartsData:Array = [];
 		
-		private var _copter:Heli;
+		private var _copter:Copter;
 		
 		public function HUD() 
 		{
@@ -64,7 +64,9 @@ package ui
 			
 			graphic = _display;
 			
-			layer = 0;
+			layer = Layer.GUI;
+			
+			visible = !GameState.emulation;
 			
 			setupHearts();
 		}

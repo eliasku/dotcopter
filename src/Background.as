@@ -1,6 +1,7 @@
-package  
+package
 {
 	import com.ek.asset.AssetManager;
+	import draw.DrawingMode;
 	import draw.Pencil;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
@@ -14,27 +15,41 @@ package
 	{
 		private var _game:CoptGame;
 		
-		public function Background() 
+		private var _background:Back;
+		private var _foreground:Back;
+		
+		public function Background()
 		{
 			_game = CoptGame.instance;
 			
-			var bg:BitmapData = AssetManager.getBitmapData("gfx_bg_forest0");
-			var back:Back = new Back(bg, 0.2, 0.0);
-			_game.addGraphic(back, ZSort.BG);
-
-			bg = generateStars(26);
+			var bg:BitmapData;
+			var back:Back;
+			
+			bg = AssetManager.getBitmapData(Level.background);
 			back = new Back(bg, 0.2, 0.0);
-			back.alpha = 0.3;
-			_game.addGraphic(back, ZSort.BG);
+			_game.addGraphic(back, Layer.BG);
 			
-			bg = generateStars(13);
-			back = new Back(bg, 0.4, 0.0);
-			back.alpha = 0.6;
-			_game.addGraphic(back, ZSort.BG);
+			if (Level.stars)
+			{
+				bg = generateStars(26, 0.3);
+				back = new Back(bg, 0.2, 0.0);
+				_game.addGraphic(back, Layer.BG);
+				
+				bg = generateStars(13, 0.6);
+				back = new Back(bg, 0.4, 0.0);
+				_game.addGraphic(back, Layer.BG);
+			}
 			
-			bg = mirror(AssetManager.getBitmapData("gfx_bg_forest1"));
+			// TODO: insert middle plane if any
+			
+			bg = mirror(AssetManager.getBitmapData(Level.foreground));
 			back = new Back(bg, 1.0, 1.0);
-			_game.addGraphic(back, ZSort.BG);
+			_game.addGraphic(back, Layer.BG);
+		}
+		
+		public function reset():void 
+		{
+			// TODO: reset all graphics content
 		}
 		
 		private function mirror(source:BitmapData):BitmapData
@@ -44,10 +59,17 @@ package
 			
 			var back:BitmapData = new BitmapData(top.width, top.height * 2, true, Pencil.BLACK);
 			
-			var matrix:Matrix = new Matrix();
-			matrix.rotate(Math.PI);
-			matrix.translate(top.width, top.height);
-			back.draw(top, matrix);
+			if (Level.drawingMode == DrawingMode.DOUBLE)
+			{
+				var matrix:Matrix = new Matrix();
+				matrix.rotate(Math.PI);
+				matrix.translate(top.width, top.height);
+				back.draw(top, matrix);
+			}
+			else
+			{
+				
+			}
 			
 			matrix = new Matrix();
 			matrix.translate(0, top.height);
@@ -56,11 +78,13 @@ package
 			return back;
 		}
 		
-		private function generateStars(num:int):BitmapData
+		private function generateStars(num:int, alpha:Number):BitmapData
 		{
+			var color:uint = (0xFF * alpha) << 24 | 0xFFFFFF;
 			var stars:BitmapData = new BitmapData(FP.width, FP.height * 2, true, Pencil.BLACK);
-			for (var i:int = 0; i < num; i++) {
-				stars.setPixel32(FP.random * FP.width, FP.random * FP.height * 2, Pencil.WHITE);
+			for (var i:int = 0; i < num; i++)
+			{
+				stars.setPixel32(FP.random * FP.width, FP.random * FP.height * 2, color);
 			}
 			return stars;
 		}

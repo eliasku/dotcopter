@@ -16,6 +16,17 @@ package utils
 			return ind;
 		}
 		
+		public static function shuffle(arr:Array):Array
+		{
+			var shuffled:Array = [];
+ 
+			while (arr.length > 0) 
+			{
+				shuffled.push(arr.splice(Math.round(Math.random() * (arr.length - 1)), 1)[0]);
+			}
+			return shuffled;
+		}
+		
 	}
 
 }
