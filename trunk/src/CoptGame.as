@@ -20,13 +20,14 @@ package
 	 */
 	public class CoptGame extends World
 	{
-		public var copter:Heli;
+		public var copter:Copter;
 		public var terrain:Landscape;
 		public var shaker:Shaker;
 		public var explode:Explode;
 		public var hud:HUD;
 		public var curtains:Curtains;
 		public var trail:Trail;
+		public var bg:Background;
 		
 		private var _dt:int = 0;
 		private var _accelTime:Number;
@@ -38,24 +39,27 @@ package
 		
 		private static var _instance:CoptGame;
 		
+		
 		public function CoptGame() 
 		{
 			if (_instance) return;
 			_instance = this;     
 			
+			Level.initialize();
+			//Level.randomize();
+			
 			shaker = new Shaker();
+			
 			terrain = new Landscape(); add(terrain); 
+			copter = new Copter(); add(copter); 
 			
-			copter = new Heli(); add(copter); 
+			trail = new Trail(); addGraphic(trail, Layer.FX);
+			explode = new Explode(); addGraphic(explode, Layer.FX);
 			
-			trail = new Trail(); addGraphic(trail, ZSort.COPTER);
-			explode = new Explode(); addGraphic(explode, ZSort.BOOM);
-			
-			curtains = new Curtains(); add(curtains);
 			hud = new HUD(); add(hud);
-			hud.visible = !GameState.emulation;
+			curtains = new Curtains(); add(curtains);
 			
-			new Background();
+			bg = new Background();
 			
 			_accelTime = _accelDist / terrain.vx;
 			BonusLayout.firstPlace();
@@ -65,8 +69,8 @@ package
 				
 			AudioManager.panorama = FP.width;
 			AudioManager.update(0, 0);
-			
-			SoundMixer.soundTransform = new SoundTransform(0.5);
+			if (GameState.emulation)
+				SoundMixer.soundTransform = new SoundTransform(0.5);
 		}
 		
 		override public function update():void 
@@ -93,11 +97,18 @@ package
 					
 					if (_dt % 2 == 0) HUD.score++;
 					
-					if (_dt % 5 == 0) create(Coin);
-					if (_dt % 60 == 0 && !GameState.emulation) BonusLayout.replace();
-					
-					//if (_dt % 30 == 0) create(Block);
-					//if (_dt % 60 == 0) create(Turret);
+					if (Level.coins)
+					{
+						if (_dt % 5 == 0)
+							create(Coin);
+						if (_dt % 60 == 0 && !GameState.emulation)
+							BonusLayout.replace();
+					}
+					if (Level.turrets)
+					{
+						if (_dt % 60 == 0)
+							create(Turret);
+					}
 					
 					if (_dt >= _accelDist && !GameState.emulation)
 					{
@@ -128,13 +139,15 @@ package
 		{
 			GameState.active = true;
 			
+			Level.randomize();
+			
+			bg.reset();
 			terrain.reset();
 			copter.reset();
 			
-			resetBlocks();
 			resetTurrets();
-			
 			resetCoins();
+			BonusLayout.firstPlace();
 			
 			_dt = 0;
 			_accelDist = 100;
@@ -148,11 +161,9 @@ package
 				Data.save("score");
 			}*/
 			HUD.score = 0;
-			
-			BonusLayout.firstPlace();
 		}
 		
-		private function resetBlocks():void 
+/*		private function resetBlocks():void 
 		{
 			var blocks:Vector.<Block> = new Vector.<Block>();
 			getClass(Block, blocks);
@@ -160,7 +171,7 @@ package
 			{
 				block.destroy();
 			}
-		}
+		}*/
 		
 		private function resetTurrets():void 
 		{

@@ -5,13 +5,23 @@
 	<item id="gfx_bg_forest1" url="gfx/bg_forest1.png" />
 	<item id="gfx_coin" url="gfx/coin.png" />
 	<item id="gfx_copter" url="gfx/copter.png" />
-	<item id="gfx_grass" url="gfx/grass.png" />
 	<item id="gfx_heart" url="gfx/heart.png" />
-	<item id="gfx_tile_mountain" url="gfx/tile_mountain.png" />
 	<item id="gfx_turret_gun" url="gfx/turret_gun.png" />
 	<item id="gfx_turret_tower" url="gfx/turret_tower.png" />
 	<item id="gfx_eye_debug" url="gfx/eye_debug.png" />
 	
+	<item id="gfx_tile_mountain" url="gfx/tile_mountain.png" />
+	<item id="gfx_tile_sand" url="gfx/tile_sand.png" />
+	<item id="gfx_tile_snow" url="gfx/tile_snow.png" />
+	<item id="gfx_tile_stone" url="gfx/tile_stone.png" />
+	<item id="gfx_tile_swamp" url="gfx/tile_swamp.png" />
+
+	<item id="gfx_outline_grass" url="gfx/outline_grass.png" />
+	<item id="gfx_outline_ground" url="gfx/outline_ground.png" />
+	<item id="gfx_outline_lava" url="gfx/outline_lava.png" />
+	<item id="gfx_outline_snow" url="gfx/outline_snow.png" />
+	<item id="gfx_outline_stone" url="gfx/outline_stone.png" />
+
 	<!-- Звуки/музыка -->
 	<item id="sfx_tune" url="sfx/tune.mp3" />
 	<item id="sfx_bullet_hit" url="sfx/bullet_hit.mp3" />

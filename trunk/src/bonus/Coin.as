@@ -24,6 +24,7 @@ package bonus
 		
 		private var _t:Number;
 		private var _ty:Number;
+		private var _place:Number;
 		
 		public function Coin() 
 		{
@@ -38,7 +39,7 @@ package bonus
 			setHitboxTo(_coin);
 			type = "coin";
 			
-			layer = ZSort.COPTER;
+			layer = Layer.ENEMY;
 		}
 		
 		override public function update():void 
@@ -50,7 +51,7 @@ package bonus
 				
 				var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
 				var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
-				var middle:int = top + (bottom - top) * BonusLayout.place;
+				var middle:int = top + (bottom - top) *  _place;
 				
 				_ty = middle;
 				y = _ty + Math.sin(_t += STEP) * AMPLITUDE;
@@ -73,11 +74,12 @@ package bonus
 		{
 			_t = 0;
 			
-			x = FP.width;	
+			x = FP.width;
 			
+			_place = BonusLayout.place;
 			var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
 			var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
-			var middle:int = top + (bottom - top) * BonusLayout.place;
+			var middle:int = top + (bottom - top) * _place;
 			
 			y = _ty = middle;
 		}

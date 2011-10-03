@@ -51,8 +51,6 @@ package draw
 			_smooth.graphics.endFill(); 
 		}
 		
-		/* INTERFACE land.ITerrain */
-		
 		public function get maxSize():int
 		{
 			return _maxSize;

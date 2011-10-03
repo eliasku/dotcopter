@@ -49,7 +49,7 @@ package
 			
 			super(0, 0, _curtains);
 			
-			layer = 1;
+			layer = Layer.GUI;
 			
 			open();
 		}

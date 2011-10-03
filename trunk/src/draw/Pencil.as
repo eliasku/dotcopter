@@ -36,8 +36,7 @@ package draw
 		
 		public function Pencil()
 		{
-			_pattern = AssetManager.getBitmapData("gfx_tile_mountain");
-			_contour = AssetManager.getBitmapData("gfx_grass");
+			resetStyle();
 		}
 		
 		public function set drawingMethod(method:Class):void
@@ -56,6 +55,12 @@ package draw
 			
 			if (_mode == DrawingMode.DOUBLE) drawPart(TOP);
 			drawPart(BOTTOM);
+		}
+		
+		public function resetStyle():void 
+		{
+			_pattern = AssetManager.getBitmapData(Level.tile);
+			_contour = AssetManager.getBitmapData(Level.outline);
 		}
 		
 		private function drawPart(dir:int):void
@@ -109,11 +114,6 @@ package draw
 			{
 				Draw.linePlus(_points[i - 1].x, sy + dir*_source.maxSize - _points[i - 1].y, _points[i].x, sy + dir*_source.maxSize - _points[i].y, 0xFF00FF00, 1, 2);
 			}*/
-		}
-		
-		public function get drawingMargin():int
-		{
-			return _method.maxSize * 2;
 		}
 		
 		public function set drawingMode(mode:String):void 

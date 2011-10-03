@@ -10,13 +10,13 @@ package
 	 */
 	public class Back extends Backdrop 
 	{
-		private var _terrain:Landscape;
+		private var _target:IMoveable = CoptGame.instance.terrain;
+		
 		private var _shift:Point = new Point();
 		private var _kx:Number;
 		
 		public function Back(source:BitmapData, kx:Number, scrollFactorY:Number = 1) 
 		{
-			_terrain = CoptGame.instance.terrain;
 			_kx = kx;
 			
 			super(source);
@@ -24,12 +24,17 @@ package
 			scrollY = scrollFactorY;
 		}
 		
+		public function setTarget(target:IMoveable):void
+		{
+			_target = target;
+		}
+		
 		override public function render(target:BitmapData, point:Point, camera:Point):void 
 		{
 			if (GameState.pauseMode) return;
 			if (GameState.started || GameState.emulation)
 			{
-				_shift.x -= _terrain.vx * _kx;
+				_shift.x -= _target.vx * _kx;
 			} 
 			super.render(target, _shift, camera);
 		}
