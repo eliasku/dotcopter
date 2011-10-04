@@ -3,6 +3,7 @@
 	<!-- битмапы -->
 	<item id="gfx_bg_forest0" url="gfx/bg_forest0.png" />
 	<item id="gfx_bg_forest1" url="gfx/bg_forest1.png" />
+	<item id="gfx_bg_forest2" url="gfx/bg_forest2.png" />
 	<item id="gfx_coin" url="gfx/coin.png" />
 	<item id="gfx_copter" url="gfx/copter.png" />
 	<item id="gfx_heart" url="gfx/heart.png" />

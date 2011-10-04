@@ -37,7 +37,7 @@ package
 			var back:Back;
 			
 			bg = AssetManager.getBitmapData(Level.background);
-			back = new Back(bg, 0.2, 0.0);
+			back = new Back(bg, 0.2, 0.5);
 			_gfxList.add(back);
 			
 			if (Level.stars)
@@ -53,23 +53,23 @@ package
 			
 			// TODO: insert middle plane if any
 			
-			bg = mirror(AssetManager.getBitmapData(Level.foreground));
+			bg = merge(AssetManager.getBitmapData("gfx_bg_forest2"), AssetManager.getBitmapData("gfx_bg_forest1"));
 			back = new Back(bg, 1.0, 1.0);
 			_gfxList.add(back);
 		}
 		
-		private function mirror(source:BitmapData):BitmapData
+		private function merge(top:BitmapData, bottom:BitmapData, mirror:Boolean = false):BitmapData
 		{
-			var top:BitmapData = source;
-			var bottom:BitmapData = source;
-			
 			var back:BitmapData = new BitmapData(top.width, top.height * 2, true, Pencil.BLACK);
 			
 			if (Level.drawingMode == DrawingMode.DOUBLE)
 			{
 				var matrix:Matrix = new Matrix();
-				matrix.rotate(Math.PI);
-				matrix.translate(top.width, top.height);
+				if (mirror)
+				{
+					matrix.rotate(Math.PI);
+					matrix.translate(top.width, top.height);
+				}
 				back.draw(top, matrix);
 			}
 			

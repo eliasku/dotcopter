@@ -37,8 +37,7 @@ package
 		
 		private var _accelDist:int = 100;
 		private var _accelAmount:Number = 0.5;
-		
-		private var _chTune:SoundChannel;
+		private var _aceelLimit:int = 5;
 		
 		private static var _instance:CoptGame;
 		
@@ -122,13 +121,18 @@ package
 							create(Turret);
 					}
 					
-					if (_dt >= _accelDist && !GameState.emulation)
+					if (!GameState.emulation)
 					{
-						_dt = 0;
-						terrain.vx += _accelAmount;
-						_accelDist = terrain.vx * _accelTime;
-						
-						AudioLazy.play("sfx_speed_up");
+						if (_dt >= _accelDist && terrain.vx < _aceelLimit)
+						{
+							_dt = 0;
+							
+							terrain.vx += _accelAmount;
+							
+							_accelDist = terrain.vx * _accelTime;
+							
+							AudioLazy.play("sfx_speed_up");
+						}
 					}
 				}
 				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && GameState.active)

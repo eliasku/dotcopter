@@ -24,6 +24,7 @@ package land
 		public static const PIECE_HEIGHT:int = FP.height * 2;
 		
 		public static const INIT_SPEED:Number = 3;
+		private var _maxSpeed:int = 10;
 		
 		private var _frame:BitmapData;
 		private var _frameRect:Rectangle;
@@ -185,6 +186,13 @@ package land
 		{
 			pos.x += _shiftRect.x;
 			_pieces[_cur].copyPixels(source, source.rect, pos);
+		}
+		
+		public function increaseSpeed(accelAmount:Number):void 
+		{
+			_vx += accelAmount;
+			if (_vx > _maxSpeed)
+				_vx = _maxSpeed;
 		}
 		
 		/* INTERFACE IMoveable */
