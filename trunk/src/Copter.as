@@ -60,8 +60,6 @@ package
 		
 		public function Copter()
 		{
-			_pilot = new Pilot();
-			
 			_game = CoptGame.instance;
 			_screen = LCDScreen.instance;
 			
@@ -260,6 +258,8 @@ package
 		
 		public function reset():void
 		{
+			_pilot = (GameState.emulation) ? new AutoPilot() : new Pilot();
+			
 			if (fragAmt > fragLim)
 				fragAmt--;
 				

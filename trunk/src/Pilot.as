@@ -13,7 +13,6 @@ package
 		
 		public function Pilot() 
 		{
-			GameState.emulation = false;
 		}
 		
 		/* INTERFACE IPilotage */
