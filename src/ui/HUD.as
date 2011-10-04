@@ -66,9 +66,14 @@ package ui
 			
 			layer = Layer.GUI;
 			
-			visible = !GameState.emulation;
+			reset();
 			
 			setupHearts();
+		}
+		
+		public function reset():void 
+		{
+			visible = !GameState.emulation;
 		}
 		
 		public function setupHearts():void 
