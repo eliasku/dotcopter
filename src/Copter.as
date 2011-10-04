@@ -15,7 +15,7 @@ package
 	
 	/**
 	 * ...
-	 * @author Gleb Volkov
+	 * @author Gleb Volkov 
 	 */
 	public class Copter extends Entity
 	{
