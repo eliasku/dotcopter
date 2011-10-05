@@ -43,6 +43,9 @@ package
 		private var _accelAmount:Number = 2.0;
 		private var _aceelLimit:int = 11;
 		
+		private var _dist:int = 0;
+		private var _totalDist:int = 1000;
+		
 		private static var _instance:CoptGame;
 		
 		public function CoptGame()
@@ -108,10 +111,7 @@ package
 				if (GameState.started || GameState.emulation)
 				{
 					_dt++;
-					
-					if (_dt % 2 == 0)
-						HUD.score++;
-					
+					 
 					if (Level.coins)
 					{
 						if (_dt % 5 == 0)
@@ -140,6 +140,17 @@ package
 							AudioLazy.play("sfx_speed_up");
 						}
 					}
+					
+					if (!GameState.emulation)
+					{
+						_dist += terrain.deltaShift;
+						HUD.score = int(_dist * 0.1);
+						
+						if (_dist > _totalDist)
+						{
+							completeLevel();
+						}
+					}
 				}
 				else if ((Input.mousePressed || Input.pressed(Key.SPACE)) && GameState.active)
 				{
@@ -152,6 +163,19 @@ package
 			}
 		}
 		
+		private function completeLevel():void 
+		{
+			GameState.emulation = true;
+			hud.reset();
+			copter.changePilot();
+			
+			var st:SoundTransform = new SoundTransform();
+			st.volume = GameState.emulation ? 0.5 : 1;
+			SoundMixer.soundTransform = st;
+			
+			Music.getMusic("sfx_tune").stop();
+		}
+		
 		public function stopGame():void
 		{
 			GameState.pauseMode = true;
@@ -160,6 +184,12 @@ package
 		public function reset():void
 		{
 			GameState.active = true;
+			
+			if (!GameState.emulation)
+			{
+				_dist = 0;
+				HUD.score = _dist;
+			}
 			
 			Level.randomize();
 			
@@ -187,7 +217,7 @@ package
 			SoundMixer.soundTransform = st;
 		}
 		
-		/*		private function resetBlocks():void
+		/*private function resetBlocks():void
 		   {
 		   var blocks:Vector.<Block> = new Vector.<Block>();
 		   getClass(Block, blocks);
