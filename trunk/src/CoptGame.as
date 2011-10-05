@@ -2,6 +2,7 @@ package
 {
 	import bonus.BonusLayout;
 	import bonus.Coin;
+	import ui.LevelCompleteScreen;
 
 	import land.Landscape;
 
@@ -36,15 +37,17 @@ package
 		public var bg:Background;
 		public var menu:Menu;
 		
-		private var _dt:int = 0;
+		private var _completeMenu:LevelCompleteScreen;
+		
+		private var _t:int = 0;
 		private var _accelTime:Number;
 		
-		private var _accelDist:int = 100;
+		private var _accelDist:int = 150;
 		private var _accelAmount:Number = 2.0;
 		private var _aceelLimit:int = 11;
 		
 		private var _dist:int = 0;
-		private var _totalDist:int = 1000;
+		private var _totalDist:int = 4000;
 		
 		private static var _instance:CoptGame;
 		
@@ -78,9 +81,9 @@ package
 			
 			menu = new Menu();
 			add(menu);
-
-			_dt = 0;
-			_accelDist = 100;
+			
+			_completeMenu = new LevelCompleteScreen();
+			add(_completeMenu);
 			
 			reset();
 			
@@ -110,26 +113,26 @@ package
 				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
 				if (GameState.started || GameState.emulation)
 				{
-					_dt++;
+					_t++;
 					 
 					if (Level.coins)
 					{
-						if (_dt % 5 == 0)
+						if (_t % 5 == 0)
 							create(Coin);
-						if (_dt % 60 == 0 && !GameState.emulation)
+						if (_t % 60 == 0)
 							BonusLayout.replace();
 					}
 					if (Level.turrets)
 					{
-						if (_dt % 60 == 0)
+						if (_t % 60 == 0)
 							create(Turret);
 					}
 					
 					if (!GameState.emulation)
 					{
-						if (_dt >= _accelDist && terrain.vx < _aceelLimit)
+						if (_t >= _accelDist && terrain.vx < _aceelLimit)
 						{
-							_dt = 0;
+							_t = 0;
 							
 							terrain.vx += _accelAmount;
 							
@@ -165,7 +168,10 @@ package
 		
 		private function completeLevel():void 
 		{
+			GameState.started = false;
+			GameState.active = false;
 			GameState.emulation = true;
+			
 			hud.reset();
 			copter.changePilot();
 			
@@ -174,6 +180,11 @@ package
 			SoundMixer.soundTransform = st;
 			
 			Music.getMusic("sfx_tune").stop();
+			
+			_dist = 0;
+			HUD.score = _dist;
+			
+			_completeMenu.show();
 		}
 		
 		public function stopGame():void
@@ -202,7 +213,10 @@ package
 			resetCoins();
 			BonusLayout.firstPlace();
 			
+			_t = 0;
+			_accelDist = 150;
 			_accelTime = _accelDist / terrain.vx;
+			trace(_accelTime)
 			
 			//save score
 			/*if (HUD.score > HUD.best) {
@@ -210,6 +224,7 @@ package
 			   Data.writeInt("best", HUD.best);
 			   Data.save("score");
 			}*/
+			
 			HUD.score = 0;
 			
 			var st:SoundTransform = new SoundTransform();

@@ -11,7 +11,7 @@ package
 	{
 		private static var _background:Array = ["gfx_bg_forest0"];
 		private static var _foreground:Array = ["gfx_bg_forest1"];
-		private static var _drawingMode:Array = [DrawingMode.DOUBLE, DrawingMode.SINGLE];
+		private static var _drawingMode:Array = [DrawingMode.DOUBLE, DrawingMode.SINGLE, DrawingMode.DOUBLE];
 		private static var _drawingMethod:Array = [DrawingMethod.FRACTAL, DrawingMethod.COSINE, DrawingMethod.PERLIN];
 		private static var _tile:Array = ["gfx_tile_mountain", "gfx_tile_sand", "gfx_tile_snow", "gfx_tile_stone", "gfx_tile_swamp"];
 		private static var _outline:Array = ["gfx_outline_grass", "gfx_outline_ground", "gfx_outline_lava", "gfx_outline_snow", "gfx_outline_stone"];
@@ -31,7 +31,7 @@ package
 			background = FP.choose(_background);
 			foreground = FP.choose(_foreground);
 			
-			stars = Math.random() < 0.5;
+			stars = true; //Math.random() < 0.5;
 			
 			drawingMode = FP.choose(_drawingMode);
 			drawingMethod = FP.choose(_drawingMethod);
@@ -39,8 +39,8 @@ package
 			tile = FP.choose(_tile);
 			outline = FP.choose(_outline);
 			
-			coins =  Math.random() < 0.5;
-			turrets =  Math.random() < 0.5;
+			coins =  true; //Math.random() < 0.5;
+			turrets = true; //Math.random() < 0.5;
 		}
 		
 		public static function initialize():void
