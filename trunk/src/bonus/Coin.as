@@ -14,8 +14,8 @@ package bonus
 	 */
 	public class Coin extends Entity 
 	{
-		private const STEP:Number = 0.15;
-		private const AMPLITUDE:Number = 4;
+		private const STEP:Number = 0.1;
+		private const AMPLITUDE:Number = 2;
 		
 		private var _halfWidth:int;
 		

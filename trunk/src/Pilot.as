@@ -9,10 +9,12 @@ package
 	 */
 	public class Pilot implements IPilotage 
 	{
+		private var _owner:Copter;
 		private var _maxLifes:int = 3;
 		
-		public function Pilot() 
+		public function Pilot(copter:Copter) 
 		{
+			_owner = copter;
 		}
 		
 		/* INTERFACE IPilotage */

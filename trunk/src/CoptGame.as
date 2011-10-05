@@ -2,19 +2,23 @@ package
 {
 	import bonus.BonusLayout;
 	import bonus.Coin;
+
+	import land.Landscape;
+
+	import net.flashpunk.FP;
+	import net.flashpunk.World;
+	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
+
+	import ui.HUD;
+	import ui.Menu;
+
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.AudioManager;
 	import com.ek.audio.Music;
-	import flash.media.SoundChannel;
+
 	import flash.media.SoundMixer;
 	import flash.media.SoundTransform;
-	import land.Landscape;
-	import net.flashpunk.FP;
-	import net.flashpunk.utils.Input;
-	import net.flashpunk.utils.Key;
-	import net.flashpunk.World;
-	import ui.HUD;
-	import ui.Menu;
 	
 	/**
 	 * ...
@@ -36,8 +40,8 @@ package
 		private var _accelTime:Number;
 		
 		private var _accelDist:int = 100;
-		private var _accelAmount:Number = 0.5;
-		private var _aceelLimit:int = 5;
+		private var _accelAmount:Number = 2.0;
+		private var _aceelLimit:int = 11;
 		
 		private static var _instance:CoptGame;
 		
@@ -130,6 +134,8 @@ package
 							terrain.vx += _accelAmount;
 							
 							_accelDist = terrain.vx * _accelTime;
+							
+							LCDScreen.instance.motionBlurAlpha = 0.8 - 0.4*((terrain.vx-3.0) / 8.0);
 							
 							AudioLazy.play("sfx_speed_up");
 						}
