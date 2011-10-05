@@ -258,7 +258,7 @@ package
 		
 		public function reset():void
 		{
-			_pilot = (GameState.emulation) ? new AutoPilot() : new Pilot();
+			_pilot = (GameState.emulation) ? new AutoPilot(this) : new Pilot(this);
 			
 			if (fragAmt > fragLim)
 				fragAmt--;
@@ -370,6 +370,11 @@ package
 		public function get pilot():IPilotage 
 		{
 			return _pilot;
+		}
+
+		public function get vy():Number
+		{
+			return _vy;
 		}
 	}
 }

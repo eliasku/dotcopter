@@ -1,17 +1,18 @@
 package land
 {
 	import draw.*;
+
+	import net.flashpunk.Entity;
+	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Image;
+	import net.flashpunk.masks.Pixelmask;
+
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
 	import flash.display.Shape;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import net.flashpunk.Entity;
-	import net.flashpunk.FP;
-	import net.flashpunk.graphics.Image;
-	import net.flashpunk.masks.Pixelmask;
-	import net.flashpunk.utils.Draw;
 	
 	/**
 	 * ...
@@ -180,6 +181,38 @@ package land
 			}
 			
 			return sy;
+		}
+		
+		public function getSafeRect(x:int, distance:int):Rectangle
+		{
+			var result:Rectangle = new Rectangle(x, 0.0, 0.0, 0.0);
+			var i:int = distance;
+			var value:int;
+			var top:int;
+			var bottom:int = 99999999;
+			
+			while(i > 0)
+			{
+				value = getPlaceOffset(x, 1);
+				if(value > top) top = value;
+		
+				value = getPlaceOffset(x, -1);
+				if(value < bottom) bottom = value;
+				
+				if(bottom - top < 20)
+				{
+					i = 0;
+				}
+				
+				--i;
+				++x;
+				result.width += 1.0;
+			}
+			
+			result.y = top;
+			result.height = bottom - top;
+			
+			return result;
 		}
 		
 		public function stamp(source:BitmapData, pos:Point):void 
