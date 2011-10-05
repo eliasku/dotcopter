@@ -163,11 +163,7 @@ package
 					
 				if (GameState.emulation)
 				{
-					var fpos:Point = centre.clone();
-					var scan:int = 25;
-					fpos.x = _game.terrain.deltaShift * scan;
-					fpos.y = proceed(1 , scan);
-					_pilot.update(centre, fpos);
+					_pilot.update(centre);
 				}
 			}
 			
@@ -184,26 +180,6 @@ package
 			}
 			
 			super.update();
-		}
-		
-		public function proceed(dir:int, steps:int):int
-		{
-			var ty:int = y;
-			var tvy:Number = _vy;
-			
-			while (steps > 0)
-			{
-				tvy += (dir>0) ? _ay : _gravity;
-				if (tvy > _maxUp + 0.5)
-					tvy = _maxUp + 0.5;
-				else if (tvy < -_maxUp)
-					tvy = -_maxUp;
-				
-				ty += tvy;	
-				steps--;
-			}
-			
-			return ty;
 		}
 		
 		private function rotateCopter(k:Number = 4):void 
@@ -281,6 +257,11 @@ package
 			
 			if (_game.hud) _game.hud.resetHearts();
 			lifes = _pilot.maxLifes;
+		}
+		
+		public function changePilot():void
+		{
+			_pilot = (GameState.emulation) ? new AutoPilot(this) : new Pilot(this);
 		}
 		
 		public function damage():void

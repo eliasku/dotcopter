@@ -19,7 +19,7 @@ package
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point,  fpos:Point):void 
+		public function update(pos:Point):void 
 		{
 			
 		}

@@ -1,13 +1,8 @@
 package
 {
-	import land.Landscape;
-
-	import net.flashpunk.Entity;
-	import net.flashpunk.FP;
-	import net.flashpunk.graphics.Image;
-
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import land.Landscape;
 	
 	/**
 	 * ...
@@ -27,13 +22,13 @@ package
 		
 		private var _terrain:Landscape;
 		
-		private var _dummy:Entity;
+		//private var _dummy:Entity;
 		
 		public function AutoPilot(owner:Copter)
 		{
 			_owner = owner;
 			_terrain = CoptGame.instance.terrain;
-			
+		
 			//var img:Image = Image.createCircle(1.0);
 			//_dummy = new Entity(0, 0, img);
 			//CoptGame.instance.add(_dummy);
@@ -41,7 +36,7 @@ package
 		
 		/* INTERFACE IPilotage */
 		
-		public function update(pos:Point, fpos:Point):void
+		public function update(pos:Point):void
 		{
 			var safeArea:Rectangle = _terrain.getSafeRect(pos.x, _terrain.vx * 50);
 			
@@ -54,13 +49,13 @@ package
 		{
 			var mask_height:Number = 6;
 			const pred_time:Number = 5;
-			var pred_offset_y:Number = _owner.vy*pred_time;
+			var pred_offset_y:Number = _owner.vy * pred_time;
 			
-			if(pos.y - mask_height + pred_offset_y < rect.y)
+			if (pos.y - mask_height + pred_offset_y < rect.y)
 			{
 				setControl(DOWN);
 			}
-			else if(pos.y + mask_height + pred_offset_y > rect.y + rect.height)
+			else if (pos.y + mask_height + pred_offset_y > rect.y + rect.height)
 			{
 				setControl(UP);
 			}
@@ -79,7 +74,7 @@ package
 			var db:int = bottom - pos.y;
 			
 			var dir:int;
-
+			
 			if (dt <= db)
 			{
 				dir = DOWN;
@@ -93,11 +88,12 @@ package
 		}
 		
 		private var _toogleTimeout:int = 0;
+		
 		private function suggestControl(dir:int):void
 		{
-			if((dir > 0 && !_controlUp) || (dir < 0 && !_controlDown))
+			if ((dir > 0 && !_controlUp) || (dir < 0 && !_controlDown))
 			{
-				if(_toogleTimeout < 20)
+				if (_toogleTimeout < 20)
 				{
 					return;
 				}
@@ -107,7 +103,7 @@ package
 		}
 		
 		private function setControl(dir:int):void
-		{			
+		{
 			if (dir > 0)
 			{
 				_controlUp = true;
