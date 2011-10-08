@@ -15,12 +15,9 @@ package
 		public static const SMALL:String = "small";
 		
 		private var _particle:BitmapData;
-		private var _shaker:Shaker;
 		
 		public function Explode()
 		{
-			_shaker = CoptGame.instance.shaker;
-			
 			_particle = new BitmapData(1, 1, true, 0xFFFFFFFF);
 			super(_particle);
 			
@@ -39,7 +36,8 @@ package
 		
 		public function blast(p:Point):void
 		{
-			_shaker.perform();
+			Shaker.perform();
+			
 			for (var i:int = 0; i < 80; i++)
 			{
 				emit("big", p.x, p.y);

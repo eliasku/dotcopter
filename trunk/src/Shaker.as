@@ -7,10 +7,10 @@ package
 	 */
 	public class Shaker 
 	{
-		private var _intensity:Number;
-		private var _shakeTime:int = -1;
+		private static var _intensity:Number;
+		private static var _shakeTime:int = -1;
 		
-		private function shake(time:int):void
+		private static function shake(time:int):void
 		{
 			_shakeTime = time;
 			if (_shakeTime < 0)
@@ -19,7 +19,7 @@ package
 			}
 		}
 		
-		public function update():void
+		public static function update():void
 		{
 			if (isShaking())
 			{
@@ -40,19 +40,19 @@ package
 			}
 		}
 		
-		public function perform(intensity:Number = 0.06, duration:int = 24):void 
+		public static function perform(intensity:Number = 0.06, duration:int = 24):void 
 		{
 			_intensity = intensity;
 			shake(duration);
 		}
 		
-		private function updateShake(dx:int, dy:int):void 
+		private static function updateShake(dx:int, dy:int):void 
 		{
 			FP.camera.x = dx;
 			FP.camera.y = FP.camera.y + dy;
 		}
 		
-		private function isShaking():Boolean 
+		private static function isShaking():Boolean 
 		{
 			return _shakeTime >= 0;
 		}

@@ -5,11 +5,13 @@ package
 	import com.ek.audio.AudioLazy;
 	import com.ek.audio.Music;
 	import flash.display.BitmapData;
+	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.media.SoundChannel;
 	import land.Landscape;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.masks.Pixelmask;
 	
@@ -25,6 +27,7 @@ package
 		private var _copter:Spritemap;
 		private var _copterMask:Pixelmask;
 		private var _maskBitmapData:BitmapData;
+		private var _dummy:Image;
 		
 		public var lifes:int;
 		
@@ -70,6 +73,14 @@ package
 			_copter.play("fly");
 			_copter.centerOrigin();
 			graphic = _copter;
+			
+			// TODO: insert in Spritemap render
+			var dummyBitmapData:BitmapData = new BitmapData(SPRITE_WIDTH, SPRITE_HEIGHT, true, 0);
+			var ct:ColorTransform = new ColorTransform();
+			ct.color = 0xFFFFFF;
+			dummyBitmapData.draw(_copter.source, null, ct);
+			_dummy = new Image(dummyBitmapData);
+			_dummy.centerOrigin();
 			
 			var size:int = Math.ceil(Math.sqrt(_copter.width * _copter.width + _copter.height * _copter.height));
 			_maskBitmapData = new BitmapData(size, size, true, 0);
@@ -282,7 +293,7 @@ package
 				
 				_game.effects.explode.detonate("small", centre, 25);
 				_game.terrain.makeHole(centre, 10);
-				_game.shaker.perform(0.02, 6);
+				Shaker.perform(0.02, 6);
 				
 				godMode();
 			}
@@ -312,19 +323,22 @@ package
 					godMode(-1);
 				else
 				{
-					visible = (_t % 4 == 0) ? true : false;
+					_dummy.angle = _copter.angle;
+					graphic = (_t % 4 == 0) ? _dummy : _copter;
+					
 					_screen.grainDepth -= _grainStep;
 				}
 			}
 		}
 		
-		private function godMode(duration:int = 30):void
+		private function godMode(duration:int = 60):void
 		{
 			_godTime = duration;
 			if (_godTime < 0)
 			{
 				_screen.grainDepth = LCDScreen.NORMAL_GRAIN;
-				visible = true;
+				
+				graphic = _copter;
 			}
 			else
 			{

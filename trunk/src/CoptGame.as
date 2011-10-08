@@ -28,16 +28,15 @@ package
 	 */
 	public class CoptGame extends World
 	{
+		public var bg:Background;
 		public var terrain:Landscape;
 		public var effects:Effects;
 		public var copter:Copter;
 		
-		public var shaker:Shaker;
 		public var hud:HUD;
 		public var curtains:Curtains;
-		public var bg:Background;
-		public var menu:Menu;
 		
+		public var menu:Menu;
 		private var _completeMenu:LevelCompleteScreen;
 		
 		private var _t:int = 0;
@@ -59,8 +58,6 @@ package
 			_instance = this;
 			
 			Level.initialize();
-			
-			shaker = new Shaker();
 			
 			terrain = new Landscape(); add(terrain);
 			copter = new Copter(); add(copter);
@@ -157,7 +154,8 @@ package
 					Music.getMusic("sfx_tune").play();
 				}
 				
-				shaker.update();
+				Shaker.update();
+				
 				super.update();
 			}
 		}
