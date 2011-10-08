@@ -38,7 +38,7 @@ package
 			_startPos = startPos;
 			
 			_terrain = CoptGame(FP.world).terrain;
-			_explode = CoptGame(FP.world).explode;
+			_explode = CoptGame(FP.world).effects.explode;
 			
 			var image:Image = Image.createRect(2, 2, Pencil.RED); 
 			image.alpha = 0.8;

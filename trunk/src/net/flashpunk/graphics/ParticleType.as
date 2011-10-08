@@ -1,6 +1,7 @@
 ﻿package net.flashpunk.graphics 
 {
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import net.flashpunk.FP;
 	
@@ -72,15 +73,15 @@
 		}
 		
 		/**
-		* Sets the gravity range of this particle type.
-		* @param  gravity      Gravity amount to affect to the particle y velocity.
-		* @param  gravityRange  Random amount to add to the particle's gravity.
+		* Sets the velocity range of this particle type.
+		* @param  velocity		 Velocity amount to affect to the particle y velocity.
+		* @param  velocityRange	 Random amount to add to the particle's velocity.
 		* @return  This ParticleType object.
 		*/
-		public function setGravity(gravity:Number = 0, gravityRange:Number = 0):ParticleType
+		public function setVelocity(velocity:Point, velocityRange:Point):ParticleType
 		{
-			_gravity = gravity;
-			_gravityRange = gravityRange;
+			_velocity = velocity;
+			_velocityRange = velocityRange;
 			return this;
 		}
 		
@@ -154,9 +155,9 @@
 		/** @private */ internal var _alphaRange:Number = 0;
 		/** @private */ internal var _alphaEase:Function;
 		
-		// Gravity information.
-		/** @private */ internal var _gravity:Number = 0;
-		/** @private */ internal var _gravityRange:Number = 0;
+		// Velocity information.
+		/** @private */ internal var _velocity:Point = new Point();
+		/** @private */ internal var _velocityRange:Point = new Point();
 		
 		// Color information.
 		/** @private */ internal var _red:Number = 1;
@@ -170,5 +171,6 @@
 		// Buffer information.
 		/** @private */ internal var _buffer:BitmapData;
 		/** @private */ internal var _bufferRect:Rectangle;
+
 	}
 }

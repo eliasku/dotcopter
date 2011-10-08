@@ -37,20 +37,10 @@ package ui
 			darken.alpha = 0.2;
 			_display.add(darken);
 			
-			_introText = new Text("-ANY KEY TO START-", 7, 76, 200, 50);
+			_introText = new Text("-ANY KEY TO START-", 7, 76, 200, 50, true);
 			_introText.font = "press_start";
 			_introText.color = 0xffffff;
 			_introText.size = 8;
-			
-			var textSource:BitmapData = new BitmapData(_introText.width, _introText.height, true, Pencil.BLACK);
-			var ct:ColorTransform = new ColorTransform();
-			ct.color = 0x000000;
-			textSource.draw(_introText.source, null, ct);
-			
-			_textShadow = new Image(textSource);
-			_textShadow.x = _introText.x + 1;
-			_textShadow.y = _introText.y + 1;
-			_display.add(_textShadow);
 			
 			_display.add(_introText);
 			
@@ -67,7 +57,6 @@ package ui
 			if (_t % 10 == 0)
 			{
 				_introText.visible = !_introText.visible;
-				_textShadow.visible = _introText.visible;
 			}
 			
 			if (GameState.emulation)

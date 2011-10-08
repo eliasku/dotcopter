@@ -112,8 +112,9 @@
 				td = (type._ease == null) ? t : type._ease(t);
 				_p.x = _point.x + p._x + p._moveX * td;
 				_p.y = _point.y + p._y + p._moveY * td;
-				p._moveX -= p._gravity * td;
-				//p._moveY += p._gravity * td;
+				
+				p._moveX += p._velocity.x * td;
+				p._moveY += p._velocity.y * td;
 				
 				// get frame
 				rect.x = rect.width * type._frames[uint(td * type._frameCount)];
@@ -201,16 +202,16 @@
 		}
 		
 		/**
-		 * Sets the gravity range for a particle type.
-		 * @param  name      The particle type.
-		 * @param  gravity      Gravity amount to affect to the particle y velocity.
-		 * @param  gravityRange  Random amount to add to the particle's gravity.
+		 * Sets the velocity range for a particle type.
+		 * @param  name			The particle type.
+		 * @param  velocity		Velocity amount to affect to the particle y velocity.
+		 * @param  velocityRange	Random amount to add to the particle's velocity.
 		 * @return  This ParticleType object.
 		 */
-		public function setGravity(name:String, gravity:Number = 0, gravityRange:Number = 0):ParticleType
+		public function setVelocity(name:String, velocity:Point, velocityRange:Point):ParticleType
 		{
-			return (_types[name] as ParticleType).setGravity(gravity, gravityRange);
-		}
+			return (_types[name] as ParticleType).setVelocity(velocity, velocityRange);
+		}	
 		
 		/**
 		 * Emits a particle.
@@ -243,7 +244,10 @@
 			p._moveY = Math.sin(a) * d;
 			p._x = x;
 			p._y = y;
-			p._gravity = type._gravity + type._gravityRange * FP.random;
+			
+			p._velocity.x = type._velocity.x + type._velocityRange.x * FP.random;
+			p._velocity.y = type._velocity.y + type._velocityRange.y * FP.random;
+			
 			_particleCount ++;
 			return (_particle = p);
 		}

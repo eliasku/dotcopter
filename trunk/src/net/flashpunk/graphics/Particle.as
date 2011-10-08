@@ -28,8 +28,8 @@
 		/** @private */ internal var _moveX:Number;
 		/** @private */ internal var _moveY:Number;
 		
-		// Gravity information.
-		/** @private */ internal var _gravity:Number;
+		// Velocity information 
+		/** @private */ internal var _velocity:Point = new Point();
 		
 		// List information.
 		/** @private */ internal var _prev:Particle;
