@@ -9,7 +9,7 @@ package
 	/**
 	 * ...
 	 * @author Gleb Volkov
-	 */
+	 */  
 	public class Explode extends Emitter 
 	{
 		public static const SMALL:String = "small";
@@ -32,8 +32,9 @@ package
 			newType("small", [0]);
 			// fixed time stamp 9, 6 = 0.3, 0.2
 			setMotion("small", 0, 15, 12, 360, 5, 3, Ease.quadOut);
-			setAlpha("small", 1.0, 0.4); 
-			setGravity("small", 3, 0);
+			setAlpha("small", 1.0, 0.4);
+			
+			setVelocity("small", new Point( -3, 0), new Point());
 		}
 		
 		public function blast(p:Point):void

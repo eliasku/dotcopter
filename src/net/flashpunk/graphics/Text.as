@@ -1,6 +1,8 @@
 ﻿package net.flashpunk.graphics 
 {
 	import flash.display.BitmapData;
+	import flash.geom.ColorTransform;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
@@ -32,7 +34,7 @@
 		 * @param	width		Image width (leave as 0 to size to the starting text string).
 		 * @param	height		Image height (leave as 0 to size to the starting text string).
 		 */
-		public function Text(text:String, x:Number = 0, y:Number = 0, width:uint = 0, height:uint = 0)
+		public function Text(text:String, x:Number = 0, y:Number = 0, width:uint = 0, height:uint = 0, dropShadow:Boolean = false)
 		{
 			_field.embedFonts = true;
 			_field.defaultTextFormat = _form = new TextFormat(Text.font, Text.size, 0xFFFFFF);
@@ -44,6 +46,15 @@
 			updateBuffer();
 			this.x = x;
 			this.y = y;
+			
+			_dropShadow = dropShadow;
+			if (_dropShadow)
+			{
+				_shadowMatrix = new Matrix();
+				_shadowMatrix.translate(1, 1);
+				_shadowColorTransform = new ColorTransform();
+				_shadowColorTransform.color = 0x000000;
+			}
 		}
 		
 		/** @private Updates the drawing buffer. */
@@ -53,7 +64,13 @@
 			_field.width = _width = _field.textWidth + 4;
 			_field.height = _height = _field.textHeight + 4;
 			_source.fillRect(_sourceRect, 0);
+			
+			if (_dropShadow)
+				_source.draw(_field, _shadowMatrix, _shadowColorTransform);
+			
 			_source.draw(_field);
+			
+			
 			super.updateBuffer(clearBefore);
 		}
 		
@@ -115,6 +132,10 @@
 		/** @private */ private var _text:String;
 		/** @private */ private var _font:String;
 		/** @private */ private var _size:uint;
+		
+		/** @private */ private var _dropShadow:Boolean;
+		/** @private */ private var _shadowMatrix:Matrix;
+		/** @private */ private var _shadowColorTransform:ColorTransform;
 		
 		// Default font family.
 		// Use this option when compiling with Flex SDK 3 or lower

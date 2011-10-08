@@ -35,23 +35,13 @@ package ui
 			darken.alpha = 0.2;
 			display.add(darken);
 			
-			var completeText:Text = new Text("LEVEL COMPLETE", 25, 40, 200, 50);
+			var completeText:Text = new Text("LEVEL COMPLETE", 25, 40, 200, 50, true);
 			completeText.font = "press_start";
 			completeText.color = 0xffffff;
 			completeText.size = 8;
 			
-			var textSource:BitmapData = new BitmapData(completeText.width, completeText.height, true, Pencil.BLACK);
-			var ct:ColorTransform = new ColorTransform();
-			ct.color = 0x000000;
-			textSource.draw(completeText.source, null, ct);
-			
-			var textShadow:Image = new Image(textSource);
-			textShadow.x = completeText.x + 1;
-			textShadow.y = completeText.y + 1;
-			display.add(textShadow);
-			
 			display.add(completeText);
-		
+			
 			graphic = display;
 			
 			layer = Layer.GUI;

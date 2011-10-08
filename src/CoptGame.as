@@ -2,6 +2,7 @@ package
 {
 	import bonus.BonusLayout;
 	import bonus.Coin;
+	import net.flashpunk.Entity;
 	import ui.LevelCompleteScreen;
 
 	import land.Landscape;
@@ -27,13 +28,13 @@ package
 	 */
 	public class CoptGame extends World
 	{
-		public var copter:Copter;
 		public var terrain:Landscape;
+		public var effects:Effects;
+		public var copter:Copter;
+		
 		public var shaker:Shaker;
-		public var explode:Explode;
 		public var hud:HUD;
 		public var curtains:Curtains;
-		public var trail:Trail;
 		public var bg:Background;
 		public var menu:Menu;
 		
@@ -61,15 +62,10 @@ package
 			
 			shaker = new Shaker();
 			
-			terrain = new Landscape();
-			add(terrain);
-			copter = new Copter();
-			add(copter);
+			terrain = new Landscape(); add(terrain);
+			copter = new Copter(); add(copter);
+			effects = new Effects(); add(effects);
 			
-			trail = new Trail();
-			addGraphic(trail, Layer.FX);
-			explode = new Explode();
-			addGraphic(explode, Layer.FX);
 			
 			hud = new HUD();
 			add(hud);
@@ -216,7 +212,6 @@ package
 			_t = 0;
 			_accelDist = 150;
 			_accelTime = _accelDist / terrain.vx;
-			trace(_accelTime)
 			
 			//save score
 			/*if (HUD.score > HUD.best) {

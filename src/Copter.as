@@ -116,7 +116,7 @@ package
 				_t++;
 				
 				if (lifes < _pilot.maxLifes)
-					_game.trail.smoke(centre);
+					_game.effects.trail.smoke(centre);
 				
 				updateGod();
 				
@@ -278,13 +278,9 @@ package
 			}
 			else
 			{
-				_game.trail.puffAmount = int(Trail.MAX_PUFF * (1 - lifes / _pilot.maxLifes));
-				
-				//trace("[copter]", "taking damage");
-				
 				AudioLazy.playAt("sfx_kick", centre.x, centre.y);
 				
-				_game.explode.detonate("small", centre, 25);
+				_game.effects.explode.detonate("small", centre, 25);
 				_game.terrain.makeHole(centre, 10);
 				_game.shaker.perform(0.02, 6);
 				
@@ -295,7 +291,9 @@ package
 		private function fatality():void
 		{
 			_game.terrain.makeHole(centre);
-			_game.explode.blast(centre);
+			
+			_game.effects.explode.blast(centre);
+			
 			_game.curtains.close();
 		}
 		
