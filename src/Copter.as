@@ -127,7 +127,7 @@ package
 				_t++;
 				
 				if (lifes < _pilot.maxLifes)
-					_game.effects.trail.smoke(centre);
+					_game.effects.trail.smoke(centre, lifes, _pilot.maxLifes);
 				
 				updateGod();
 				
