@@ -1,10 +1,12 @@
 package  
 {
-	import flash.display.BitmapData;
-	import flash.geom.Point;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Emitter;
 	import net.flashpunk.utils.Ease;
+
+	import flash.display.BitmapData;
+	import flash.filters.GlowFilter;
+	import flash.geom.Point;
 	
 	/**
 	 * ...
@@ -18,7 +20,9 @@ package
 		
 		public function Explode()
 		{
-			_particle = new BitmapData(1, 1, true, 0xFFFFFFFF);
+			_particle = new BitmapData(15, 15, true, 0x00);
+			_particle.setPixel32(7, 7, 0xffffffff);
+			_particle.applyFilter(_particle, _particle.rect, new Point(), new GlowFilter(0xffffff, 1.0, 3.0, 3.0, 8, 3));
 			super(_particle);
 			
 			newType("big", [0]);
