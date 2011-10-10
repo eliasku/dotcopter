@@ -131,7 +131,7 @@ package
 							
 							_accelDist = terrain.vx * _accelTime;
 							
-							LCDScreen.instance.motionBlurAlpha = 0.8 - 0.4*((terrain.vx-3.0) / 8.0);
+							LCDScreen.instance.motionBlurAlpha = 1.0 - 0.2*((terrain.vx-3.0) / 8.0);
 							
 							AudioLazy.play("sfx_speed_up");
 						}

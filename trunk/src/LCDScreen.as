@@ -17,8 +17,8 @@ package
 	{
 		private static const BACKGROUND_COLOR:uint = 0xff000000;
 
-		public static const NORMAL_GRAIN:Number = 0.0175;
-		public static const HITTED_GRAIN:Number = 0.4;
+		public static const NORMAL_GRAIN:Number = 0.0;
+		public static const HITTED_GRAIN:Number = 0.2;
 		public static const DELTA_GRAIN:Number = HITTED_GRAIN - NORMAL_GRAIN;
 		
 		private static const CELL_WIDTH:int = 2;
@@ -41,13 +41,13 @@ package
 		private var _motionBlurAlpha:Number = 0.8;
 		
 		private var _grainEnabled:Boolean = true;
-		private var _grainDepth:Number = 0.0175;
+		private var _grainDepth:Number = NORMAL_GRAIN;
 		private var _grain:BitmapData;
 		private var _grainSkip:int;
 		
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
-		private var _gridAlpha:Number = 0.5;
+		private var _gridAlpha:Number = 0.25;
 		
 		private var _legoMode:Boolean;
 		private var _blackAndWhite:Boolean;
@@ -166,7 +166,7 @@ package
 			source.lock();
 			
 			
-			if(_motionBlurEnabled)
+			if(_motionBlurEnabled && _motionBlurAlpha < 1.0)
 			{
 				_intermediate.copyPixels(source, source.rect, p);
 				_buffer.draw(_intermediate, null, ct);
@@ -252,6 +252,8 @@ package
 		public function set grainDepth(value:Number):void
 		{
 			_grainDepth = value;
+			if(_grainDepth < 0.0)
+				_grainDepth = 0.0;
 		}
 
 		public function get legoMode():Boolean

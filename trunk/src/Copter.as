@@ -343,7 +343,7 @@ package
 			else
 			{
 				_screen.grainDepth = LCDScreen.HITTED_GRAIN;
-				_grainStep = LCDScreen.DELTA_GRAIN / _godTime;
+				_grainStep = 6.0 * LCDScreen.DELTA_GRAIN / _godTime;
 			}
 		}
 		
