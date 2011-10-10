@@ -47,7 +47,7 @@ package
 		
 		private var _gridBitmapData:BitmapData;
 		private var _gridBitmap:Bitmap;
-		private var _gridAlpha:Number = 0.25;
+		private var _gridAlpha:Number = 0.3;
 		
 		private var _legoMode:Boolean;
 		private var _blackAndWhite:Boolean;
