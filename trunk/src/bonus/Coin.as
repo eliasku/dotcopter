@@ -14,8 +14,8 @@ package bonus
 	 */
 	public class Coin extends Entity 
 	{
-		private const STEP:Number = 0.1;
-		private const AMPLITUDE:Number = 2;
+		private const STEP:Number = 0.157*2;
+		private const AMPLITUDE:Number = 1;
 		
 		private var _halfWidth:int;
 		
@@ -23,7 +23,10 @@ package bonus
 		private var _terrain:Landscape;
 		
 		private var _t:Number;
+		
 		private var _ty:Number;
+		private var _px:Number;
+		
 		private var _place:Number;
 		
 		public function Coin() 
@@ -47,19 +50,16 @@ package bonus
 			if (GameState.pauseMode) return;
 			if (GameState.started || GameState.emulation)
 			{
+				//_t += STEP;
 				x -= _terrain.deltaShift;
-				
-				var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
-				var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
-				var middle:int = top + (bottom - top) *  _place;
-				
-				_ty = middle;
-				y = _ty + Math.sin(_t += STEP) * AMPLITUDE;
+				//x = int(_px);
+				//y = int(_ty + Math.sin(_t) * AMPLITUDE);
 				
 				if (x + _coin.width < 0)
 				{
 					destroy();
 				}
+				
 				super.update();
 			}
 		}
@@ -74,14 +74,14 @@ package bonus
 		{
 			_t = 0;
 			
-			x = FP.width;
+			_px = x = FP.width;
 			
 			_place = BonusLayout.place;
-			var top:int = _terrain.getPlaceOffset(x + _halfWidth, 1);
-			var bottom:int = _terrain.getPlaceOffset(x + _halfWidth, -1);
+			var top:int = _terrain.getPlaceOffset(_px + _halfWidth, 1);
+			var bottom:int = _terrain.getPlaceOffset(_px + _halfWidth, -1);
 			var middle:int = top + (bottom - top) * _place;
 			
-			y = _ty = middle;
+			y = _ty = middle;// + FP.camera.y;
 		}
 	}
 

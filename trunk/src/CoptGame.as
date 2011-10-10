@@ -103,7 +103,7 @@ package
 			}
 			else
 			{
-				FP.camera.y = FP.clamp(copter.y - FP.height * 0.5, 0, FP.height);
+				FP.camera.y = FP.clamp(copter.y - int(FP.height * 0.5), 0, FP.height);
 				if (GameState.started || GameState.emulation)
 				{
 					_t++;
