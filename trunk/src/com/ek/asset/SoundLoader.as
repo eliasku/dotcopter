@@ -63,8 +63,9 @@ package com.ek.asset
 			(_loader as Sound).load(_loaderRequest, _loaderContext as SoundLoaderContext);			
 		}
 		
-		public override function embed(cls:Class):void
+		protected override function createEmbedContent(cls:Class):Boolean
 		{
+			return false;
 		}
 	}
 }
