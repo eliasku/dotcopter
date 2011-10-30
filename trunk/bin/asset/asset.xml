@@ -22,6 +22,8 @@
 	<item id="gfx_outline_lava" url="gfx/outline_lava.png" />
 	<item id="gfx_outline_snow" url="gfx/outline_snow.png" />
 	<item id="gfx_outline_stone" url="gfx/outline_stone.png" />
+	
+	<item id="gfx_bird" url="gfx/bird.png" />
 
 	<!-- Звуки/музыка -->
 	<item id="sfx_tune" url="sfx/tune.mp3" />
