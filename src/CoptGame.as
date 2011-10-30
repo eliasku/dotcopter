@@ -78,6 +78,11 @@ package
 			_completeMenu = new LevelCompleteScreen();
 			add(_completeMenu);
 			
+			var birdsFlock:BirdsFlock = new BirdsFlock();
+			add(birdsFlock);
+			birdsFlock.x = FP.halfWidth;
+			birdsFlock.y = FP.height;
+			
 			reset();
 			
 			if (!Music.hasMusic("sfx_tune"))
