@@ -78,11 +78,6 @@ package
 			_completeMenu = new LevelCompleteScreen();
 			add(_completeMenu);
 			
-			var birdsFlock:BirdsFlock = new BirdsFlock();
-			add(birdsFlock);
-			birdsFlock.x = FP.halfWidth;
-			birdsFlock.y = FP.height;
-			
 			reset();
 			
 			if (!Music.hasMusic("sfx_tune"))
@@ -124,6 +119,11 @@ package
 					{
 						if (_t % 60 == 0)
 							create(Turret);
+					}
+					
+					if (_t % 30 == 0)
+					{
+						create(BirdsFlock);
 					}
 					
 					if (!GameState.emulation)
