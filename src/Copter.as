@@ -145,6 +145,13 @@ package
 						damage();
 					}
 					
+					var birds:BirdsFlock = collide("birds", x, y) as BirdsFlock;
+					if (birds)
+					{
+						birds.destroy();
+						// GIBS
+					}
+					
 				}
 				
 				var coin:Coin = collide("coin", x, y) as Coin;

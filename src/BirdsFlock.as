@@ -5,6 +5,7 @@ package
 	import flash.geom.Point;
 	import land.Landscape;
 	import net.flashpunk.Entity;
+	import net.flashpunk.FP;
 	import net.flashpunk.Graphic;
 	import net.flashpunk.graphics.Graphiclist;
 	import net.flashpunk.graphics.Image;
@@ -41,6 +42,26 @@ package
 			}
 			
 			graphic = _display;
+			//_display.scrollY = 0.5;
+			
+			reset();
+			
+			setHitbox(SPRITE_WIDTH * 3, SPRITE_HEIGHT * 2);
+			type = "birds";
+			
+			layer = Layer.FX;
+		}
+		
+		private function reset():void 
+		{
+			x = FP.width;
+			y = int(FP.random * ((FP.height - SPRITE_HEIGHT)*1.5));
+		}
+		
+		public function destroy():void
+		{
+			world.recycle(this);
+			reset();
 		}
 		
 		private function addBird(px:int, py:int, invertAnim:Boolean = false):void
@@ -57,32 +78,38 @@ package
 		
 		override public function update():void 
 		{
-			super.update();
-			
-			_tick ++;
-			if (_tick % 6 == 0)
+			if (GameState.started && !GameState.pauseMode)
 			{
-				var bird:Graphic;
-				for (var i:int = 0; i < _display.count; i++) 
+				x -= int(_terrain.vx*0.5);
+				
+				if (x + SPRITE_WIDTH*3 < 0)
+					destroy();
+				
+				_tick ++;
+				if (_tick % 6 == 0)
 				{
-					bird = _display.children[i];
-					
-					if (_formation[i] > 0) // летим вниз
+					var bird:Graphic;
+					for (var i:int = 0; i < _display.count; i++) 
 					{
-						if (bird.y < Y_MAX)
-							bird.y ++;
-						else _formation[i] *= -1;
-					}
-					else if (_formation[i] < 0) // летим вверх
-					{
-						if (bird.y > Y_MIN)
-							bird.y --;
-						else _formation[i] *= -1;
+						bird = _display.children[i];
+						
+						if (_formation[i] > 0) // летим вниз
+						{
+							if (bird.y < Y_MAX)
+								bird.y ++;
+							else _formation[i] *= -1;
+						}
+						else if (_formation[i] < 0) // летим вверх
+						{
+							if (bird.y > Y_MIN)
+								bird.y --;
+							else _formation[i] *= -1;
+						}
 					}
 				}
+				super.update();
 			}
 		}
 		
 	}
-
 }
